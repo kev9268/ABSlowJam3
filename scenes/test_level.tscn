@@ -1,7 +1,10 @@
-[gd_scene load_steps=5 format=4 uid="uid://bevx43r3iepfw"]
+[gd_scene load_steps=6 format=4 uid="uid://bevx43r3iepfw"]
 
 [ext_resource type="Texture2D" uid="uid://b238p5fhdj702" path="res://art/pixel.png" id="1_2venv"]
 [ext_resource type="Script" uid="uid://wids4vrb683j" path="res://scenes/draw_tree.gd" id="2_paw1w"]
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_paw1w"]
+tile_data = PackedInt32Array(0, 65536, 0, 65536, 65536, 0, 131072, 65536, 0, 1, 65536, 0, 65537, 65536, 0, 131073, 65536, 0, 2, 65536, 0, 65538, 65536, 0, 131074, 65536, 0)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_paw1w"]
 texture = ExtResource("1_2venv")
@@ -14,6 +17,7 @@ texture_region_size = Vector2i(1, 1)
 [sub_resource type="TileSet" id="TileSet_j6w7d"]
 tile_size = Vector2i(1, 1)
 sources/0 = SubResource("TileSetAtlasSource_paw1w")
+pattern_0 = SubResource("TileMapPattern_paw1w")
 
 [node name="TestLevel" type="Node2D"]
 
