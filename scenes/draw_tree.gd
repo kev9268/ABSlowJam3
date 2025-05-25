@@ -5,8 +5,10 @@ var current_tree = null
 var draw_flag = true
 var set_draw_counter = 200
 var draw_counter = set_draw_counter
+
 var previous_mouse_position = Vector2(0,0)
 var draw_history = []
+var branch_counter = 5
 
 var surround_21 = [
 					Vector2i(-2,-1),Vector2i(-2,0),Vector2i(-2,1),
@@ -15,7 +17,6 @@ var surround_21 = [
 	Vector2i(1,-2),Vector2i(1,-1),Vector2i(1,0),Vector2i(1,1),Vector2i(1,2),
 					Vector2i(2,-1),Vector2i(2,0),Vector2i(2,1),]
 var surround_eight = [Vector2i(-1,-1),Vector2i(-1,0),Vector2i(-1,1),Vector2i(0,-1),Vector2i(0,0),Vector2i(0,1),Vector2i(1,-1),Vector2i(1,0),Vector2i(1,1)]
-
 
 var direction_to_vector = {
 	"north": Vector2i(0,-1),
@@ -41,14 +42,23 @@ func _process(delta: float) -> void:
 	elif Input.is_action_just_pressed("restart"):
 		get_tree().reload_current_scene()
 		return
-	
+
 	var mouse_pos = get_local_mouse_position()
 	print(draw_counter)
 	
-	
-	click_first(mouse_pos)
-	click_held(mouse_pos)
-				
+	if branch_counter>0:
+		click_first(mouse_pos)
+		click_held(mouse_pos)	
+
+		elif Input.is_action_just_released("draw"):
+			draw_flag= true
+			branch_counter-=1
+			draw_counter = set_draw_counter
+			
+
+	else:
+		print("no more branches") # temporary probably want to show restart / undo ui when no branches will create issue
+
 	previous_mouse_position = mouse_pos
 
 
@@ -82,9 +92,7 @@ func click_held(mouse_pos):
 							break
 		if draw_counter<0:
 			draw_flag= false
-	else:
-		draw_flag= true
-		draw_counter = set_draw_counter
+
 
 func undo_pressed():
 	if Input.is_action_just_pressed("undo"):
@@ -105,10 +113,10 @@ func make_branch(new_position):
 				draw_counter-=1
 				set_cell(new_coords, 0, current_tree)
 
-	
 	if(collide_position != null):
 		var push_position = direction_to_vector[calculate_mouse_direction()]
 		move_selected_cells(flood_select(collide_position), push_position)
+		
 		
 func move_selected_cells(list_of_cells, offset):
 	var tree_color = get_cell_atlas_coords(list_of_cells[0])
@@ -125,7 +133,9 @@ func move_selected_cells(list_of_cells, offset):
 var octants = [PI/8, (3*PI)/8, (5*PI)/8, (7*PI)/8]
 func calculate_mouse_direction():
 	var mouse_pos = get_local_mouse_position()
+
 	var distance = mouse_pos - previous_mouse_position
+
 	if(distance == Vector2(0,0)):
 		return "none"
 	var direction = distance.angle()
