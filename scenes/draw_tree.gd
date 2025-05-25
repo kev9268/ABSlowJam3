@@ -6,6 +6,11 @@ var draw_flag = true
 var set_draw_counter = 200
 var draw_counter = set_draw_counter
 
+var tile_types = {
+	"tree":0,
+	"wall":1,
+}
+
 var previous_mouse_position = Vector2(0,0)
 var draw_history = []
 var branch_counter = 5
@@ -70,7 +75,8 @@ func click_first(mouse_pos):
 		current_tree = null
 		var new_position = local_to_map(mouse_pos)
 		for adj_position in surround_21: #check if valid position
-			if(get_cell_source_id(adj_position+new_position) != -1):
+			var check_cell = get_cell_source_id(adj_position+new_position)
+			if(check_cell != -1 and check_cell != tile_types["wall"]):
 				current_tree = get_cell_atlas_coords(adj_position+new_position)
 				add_history()
 				break
@@ -80,7 +86,8 @@ func click_held(mouse_pos):
 		if(current_tree != null):
 			var new_position = local_to_map(mouse_pos)
 			for adj_position in surround_21:
-				if(get_cell_source_id(adj_position+new_position) != -1):
+				var check_cell = get_cell_source_id(adj_position+new_position)
+				if(check_cell != -1 and check_cell != tile_types["wall"]):
 					if get_cell_atlas_coords(new_position+adj_position) == current_tree:
 						if (draw_flag):
 							make_branch(new_position)
@@ -101,22 +108,28 @@ func undo_pressed():
 			var world_state = draw_history.pop_back()
 			clear()
 			for used_position in world_state.keys():
-				set_cell(used_position, 0, world_state[used_position])
+				set_cell(used_position, tile_types["tree"], world_state[used_position])
 
 func make_branch(new_position):
 	var collide_position = null
 	for adj_position in surround_eight:
 		var new_coords = adj_position+new_position
-		if get_cell_source_id(new_coords)  != -1 and get_cell_atlas_coords(new_coords) != current_tree: #check collision
-			collide_position = new_coords
-		else:
-			if (new_position != local_to_map(previous_mouse_position)):
-				draw_counter-=1
-				set_cell(new_coords, 0, current_tree)
-
+		if get_cell_atlas_coords(new_coords) != current_tree:
+			var check_cell = get_cell_source_id(new_coords)
+			if check_cell != -1: #check collision
+				collide_position = new_coords
+			elif check_cell != tile_types["wall"]: #dont draw over wall and self
+				if (new_position != local_to_map(previous_mouse_position)): 
+					draw_counter-=1
+					set_cell(new_coords, tile_types["tree"], current_tree)
+	
+	check_collision_type(collide_position)
+		
+func check_collision_type(collide_position):
 	if(collide_position != null):
-		var push_position = direction_to_vector[calculate_mouse_direction()]
-		move_selected_cells(flood_select(collide_position), push_position)
+		if(get_cell_source_id(collide_position) == tile_types["tree"]): #collision is a tree, push it
+			var push_position = direction_to_vector[calculate_mouse_direction()]
+			move_selected_cells(flood_select(collide_position), push_position)
 		
 		
 func move_selected_cells(list_of_cells, offset):
@@ -128,7 +141,6 @@ func move_selected_cells(list_of_cells, offset):
 	for cell in list_of_cells:
 		set_cell(cell)
 	for cell in list_of_cells:
-		
 		set_cell(cell+offset, 0, tree_color)
 		
 var octants = [PI/8, (3*PI)/8, (5*PI)/8, (7*PI)/8]
