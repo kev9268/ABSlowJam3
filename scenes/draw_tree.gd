@@ -17,7 +17,8 @@ var surround_21 = [
 	Vector2i(1,-2),Vector2i(1,-1),Vector2i(1,0),Vector2i(1,1),Vector2i(1,2),
 					Vector2i(2,-1),Vector2i(2,0),Vector2i(2,1),]
 var surround_eight = [Vector2i(-1,-1),Vector2i(-1,0),Vector2i(-1,1),Vector2i(0,-1),Vector2i(0,0),Vector2i(0,1),Vector2i(1,-1),Vector2i(1,0),Vector2i(1,1)]
-
+					#brown         #green        #orange          #pink
+var tree_colors = [Vector2i(0,0),Vector2i(0,1),Vector2i(1,0),Vector2i(1,1)]
 var direction_to_vector = {
 	"north": Vector2i(0,-1),
 	"northeast":Vector2i(1,-1),
@@ -33,7 +34,7 @@ var direction_to_vector = {
 func _ready() -> void:
 	tree_children = get_children()
 
-var tree_colors = [Vector2i(0,0),Vector2i(0,1),Vector2i(1,0),Vector2i(1,1)]
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
@@ -49,13 +50,7 @@ func _process(delta: float) -> void:
 	if branch_counter>0:
 		click_first(mouse_pos)
 		click_held(mouse_pos)	
-
-		elif Input.is_action_just_released("draw"):
-			draw_flag= true
-			branch_counter-=1
-			draw_counter = set_draw_counter
-			
-
+		click_released()
 	else:
 		print("no more branches") # temporary probably want to show restart / undo ui when no branches will create issue
 
@@ -74,7 +69,7 @@ func click_first(mouse_pos):
 	if Input.is_action_just_pressed("draw"): #pick tree color for the first time
 		current_tree = null
 		var new_position = local_to_map(mouse_pos)
-		for adj_position in surround_21:
+		for adj_position in surround_21: #check if valid position
 			if(get_cell_source_id(adj_position+new_position) != -1):
 				current_tree = get_cell_atlas_coords(adj_position+new_position)
 				add_history()
@@ -92,6 +87,12 @@ func click_held(mouse_pos):
 							break
 		if draw_counter<0:
 			draw_flag= false
+			
+func click_released():
+	if Input.is_action_just_released("draw"):
+		draw_flag= true
+		branch_counter-=1
+		draw_counter = set_draw_counter
 
 
 func undo_pressed():
