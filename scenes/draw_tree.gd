@@ -8,6 +8,7 @@ var draw_counter = set_draw_counter
 var old_position
 var previouse_mouse_position = Vector2(0,0)
 var draw_history = []
+var branch_counter = 5
 
 var direction_to_vector = {
 	"north": Vector2i(0,-1),
@@ -40,43 +41,43 @@ func _process(delta: float) -> void:
 	
 	var mouse_pos = get_local_mouse_position()
 	print(draw_counter)
-	if Input.is_action_just_pressed("draw"): #pick tree color for the first time
-		current_tree = null
-		
-		
-		var new_position = local_to_map(mouse_pos)
-		for adj_position in surround_21:
-			if(get_cell_source_id(adj_position+new_position) != -1):
-				current_tree = get_cell_atlas_coords(adj_position+new_position)
-				
-				#store the draw click, for undo
-				var interactions = {}
-				for used_position in get_used_cells():
-					interactions[used_position] = get_cell_atlas_coords(used_position)
-				draw_history.append(interactions)
-				break
-				
-	if Input.is_action_pressed("draw"): #draw the color
-		if(current_tree != null):
+	
+	if branch_counter>0:
+		if Input.is_action_just_pressed("draw"): #pick tree color for the first time
+			current_tree = null
+			
 			var new_position = local_to_map(mouse_pos)
 			for adj_position in surround_21:
 				if(get_cell_source_id(adj_position+new_position) != -1):
-					if get_cell_atlas_coords(new_position+adj_position) == current_tree:
-						if (draw_flag):
-							make_branch(new_position,old_position)
-							break
-		if draw_counter<0:
-			draw_flag= false
-	else:
-		draw_flag= true
-		draw_counter = set_draw_counter
-		
-	old_position = local_to_map(mouse_pos)
-				
-
+					current_tree = get_cell_atlas_coords(adj_position+new_position)
+					
+					#store the draw click, for undo
+					var interactions = {}
+					for used_position in get_used_cells():
+						interactions[used_position] = get_cell_atlas_coords(used_position)
+					draw_history.append(interactions)
+					break
+					
+		if Input.is_action_pressed("draw"): #draw the color
+			if(current_tree != null):
+				var new_position = local_to_map(mouse_pos)
+				for adj_position in surround_21:
+					if(get_cell_source_id(adj_position+new_position) != -1):
+						if get_cell_atlas_coords(new_position+adj_position) == current_tree:
+							if (draw_flag):
+								make_branch(new_position,old_position)
+								break
+			if draw_counter<0:
+				draw_flag= false
+		elif Input.is_action_just_released("draw"):
+			draw_flag= true
+			branch_counter-=1
+			draw_counter = set_draw_counter
 			
-	previouse_mouse_position = mouse_pos
-
+		old_position = local_to_map(mouse_pos)
+		previouse_mouse_position = mouse_pos
+	else:
+		print("no more branches") # temporary probably want to show restart / undo ui when no branches will create issue
 
 var surround_21 = [
 					Vector2i(-2,-1),Vector2i(-2,0),Vector2i(-2,1),
