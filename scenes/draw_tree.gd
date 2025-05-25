@@ -7,6 +7,7 @@ var set_draw_counter = 200
 var draw_counter = set_draw_counter
 var old_position
 var previouse_mouse_position = Vector2(0,0)
+var draw_history = []
 
 var direction_to_vector = {
 	"north": Vector2i(0,-1),
@@ -26,14 +27,33 @@ func _ready() -> void:
 var tree_colors = [Vector2i(0,0),Vector2i(0,1),Vector2i(1,0),Vector2i(1,1)]
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	
+	if Input.is_action_just_pressed("undo"):
+		if draw_history.size() > 0:
+			var world_state = draw_history.pop_back()
+			clear()
+			for used_position in world_state.keys():
+				set_cell(used_position, 0, world_state[used_position])
+			return
+	elif Input.is_action_just_pressed("restart"):
+		get_tree().reload_current_scene()
+	
 	var mouse_pos = get_local_mouse_position()
 	print(draw_counter)
 	if Input.is_action_just_pressed("draw"): #pick tree color for the first time
 		current_tree = null
+		
+		
 		var new_position = local_to_map(mouse_pos)
 		for adj_position in surround_21:
 			if(get_cell_source_id(adj_position+new_position) != -1):
 				current_tree = get_cell_atlas_coords(adj_position+new_position)
+				
+				#store the draw click, for undo
+				var interactions = {}
+				for used_position in get_used_cells():
+					interactions[used_position] = get_cell_atlas_coords(used_position)
+				draw_history.append(interactions)
 				break
 				
 	if Input.is_action_pressed("draw"): #draw the color
@@ -107,13 +127,13 @@ func calculate_mouse_direction():
 		direction = "southeast"
 	elif(direction < octants[2] and direction > octants[1]):
 		direction = "south"
-	elif(direction < octants[3] and direction > octants[2] ):
+	elif(direction < octants[3] and direction > octants[2]):
 		direction = "southwest"
 	elif(direction < -octants[0] and direction > -octants[1]):
 		direction = "northeast"
 	elif(direction < -octants[1] and direction > -octants[2]):
 		direction = "north"
-	elif(direction < -octants[2]  and direction > -octants[3] ):
+	elif(direction < -octants[2]  and direction > -octants[3]):
 		direction = "northwest"
 	elif(direction < -octants[3]  or direction > octants[3]):
 		direction = "west"
