@@ -15,6 +15,10 @@ var previous_mouse_position = Vector2(0,0)
 var draw_history = []
 var branch_counter = 5
 
+var stored_pixel_limit = 30
+var previous_color = Vector2i(-1,-1)
+var previous_pixels = []
+
 var surround_21 = [
 					Vector2i(-2,-1),Vector2i(-2,0),Vector2i(-2,1),
 	Vector2i(-1,-2),Vector2i(-1,-1),Vector2i(-1,0),Vector2i(-1,1),Vector2i(-1,2),
@@ -61,14 +65,6 @@ func _process(delta: float) -> void:
 
 	previous_mouse_position = mouse_pos
 
-
-
-func add_history():
-	#store the draw click, for undo
-	var interactions = {}
-	for used_position in get_used_cells():
-		interactions[used_position] = get_cell_atlas_coords(used_position)
-	draw_history.append(interactions)
 	
 func click_first(mouse_pos):
 	if Input.is_action_just_pressed("draw"): #pick tree color for the first time
@@ -85,6 +81,12 @@ func click_held(mouse_pos):
 	if Input.is_action_pressed("draw"): #draw the color
 		if(current_tree != null):
 			var new_position = local_to_map(mouse_pos)
+			
+			#check if the mouse is directly over a old section, (make previous branch a wall)
+			if previous_pixels.size() == stored_pixel_limit: #start checking when some amount is already drawn
+				if not new_position in previous_pixels: #ignore just recently painted pixels
+					end_click() #terminate 
+			
 			for adj_position in surround_21:
 				var check_cell = get_cell_source_id(adj_position+new_position)
 				if(check_cell != -1 and check_cell != tile_types["wall"]):
@@ -97,31 +99,60 @@ func click_held(mouse_pos):
 			
 func click_released():
 	if Input.is_action_just_released("draw"):
-		draw_flag= true
-		branch_counter-=1
-		draw_counter = set_draw_counter
-
+		end_click()
+		
+func end_click():
+	draw_flag= true
+	branch_counter-=1
+	draw_counter = set_draw_counter
+	current_tree = null
+	previous_color = Vector2i(-1,-1)
+	previous_pixels.clear()
+	
+func add_history():
+	#store the draw click, for undo
+	var interactions = {"tree":{},"wall":{}}
+	var tile_index = tile_types.keys()
+	for used_position in get_used_cells():
+		var index = tile_index[get_cell_source_id(used_position)] 
+		interactions[index][used_position] = get_cell_atlas_coords(used_position)
+	draw_history.append(interactions)
 
 func undo_pressed():
 	if Input.is_action_just_pressed("undo"):
 		if draw_history.size() > 0:
-			var world_state = draw_history.pop_back()
+			branch_counter += 1
+			
 			clear()
-			for used_position in world_state.keys():
-				set_cell(used_position, tile_types["tree"], world_state[used_position])
+			var world_state = draw_history.pop_back()
+			for type in tile_types.keys():
+				for used_position in world_state[type].keys():
+					set_cell(used_position, tile_types[type], world_state[type][used_position])
+				
+			previous_color = Vector2i(-1,-1)
+			previous_pixels.clear()
+		return true
+	return false
 
 func make_branch(new_position):
 	var collide_position = null
 	for adj_position in surround_eight:
 		var new_coords = adj_position+new_position
-		if get_cell_atlas_coords(new_coords) != current_tree:
+		
+		if get_cell_atlas_coords(new_coords) != current_tree: #dont draw on self, prevent consumuption
 			var check_cell = get_cell_source_id(new_coords)
 			if check_cell != -1: #check collision
 				collide_position = new_coords
 			elif check_cell != tile_types["wall"]: #dont draw over wall and self
 				if (new_position != local_to_map(previous_mouse_position)): 
-					draw_counter-=1
-					set_cell(new_coords, tile_types["tree"], current_tree)
+					#prevent drawing on itself, like a wall
+						draw_counter-=1
+						set_cell(new_coords, tile_types["tree"], current_tree)
+						
+						if previous_pixels.size() >= stored_pixel_limit:
+							previous_pixels.pop_front()
+						previous_pixels.append(new_coords)
+			
 	
 	check_collision_type(collide_position)
 		
