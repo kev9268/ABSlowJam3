@@ -14,10 +14,13 @@ var tile_types = {
 var previous_mouse_position = Vector2(0,0)
 var draw_history = []
 var branch_counter = 5
+var first_click = false
 
 var stored_pixel_limit = 30
 var previous_color = Vector2i(-1,-1)
 var previous_pixels = []
+
+var cursor : Sprite2D
 
 var surround_21 = [
 					Vector2i(-2,-1),Vector2i(-2,0),Vector2i(-2,1),
@@ -57,14 +60,24 @@ func _process(delta: float) -> void:
 	print(draw_counter)
 	
 	if branch_counter>0:
+		mouse_highlight(mouse_pos)
 		click_first(mouse_pos)
 		click_held(mouse_pos)	
 		click_released()
 	else:
+		get_parent().get_parent().cursor.modulate = Color(1.0,1.0,1.0,0)
 		print("no more branches") # temporary probably want to show restart / undo ui when no branches will create issue
 
 	previous_mouse_position = mouse_pos
 
+func mouse_highlight(mouse_pos):
+	var new_position = local_to_map(mouse_pos)
+	for adj_position in surround_21: #check if valid position
+		var check_cell = get_cell_source_id(adj_position+new_position)
+		if(check_cell != -1 and check_cell != tile_types["wall"]):
+			get_parent().get_parent().cursor.modulate = Color(1.0,1.0,1.0,0.5)
+			return
+	get_parent().get_parent().cursor.modulate = Color(1.0,1.0,1.0,0)
 	
 func click_first(mouse_pos):
 	if Input.is_action_just_pressed("draw"): #pick tree color for the first time
@@ -75,6 +88,7 @@ func click_first(mouse_pos):
 			if(check_cell != -1 and check_cell != tile_types["wall"]):
 				current_tree = get_cell_atlas_coords(adj_position+new_position)
 				add_history()
+				first_click = true
 				break
 				
 func click_held(mouse_pos):
@@ -82,10 +96,8 @@ func click_held(mouse_pos):
 		if(current_tree != null):
 			var new_position = local_to_map(mouse_pos)
 			
-			#check if the mouse is directly over a old section, (make previous branch a wall)
-			if previous_pixels.size() == stored_pixel_limit: #start checking when some amount is already drawn
-				if not new_position in previous_pixels: #ignore just recently painted pixels
-					end_click() #terminate 
+			if check_limit(new_position):
+				return
 			
 			for adj_position in surround_21:
 				var check_cell = get_cell_source_id(adj_position+new_position)
@@ -108,6 +120,14 @@ func end_click():
 	current_tree = null
 	previous_color = Vector2i(-1,-1)
 	previous_pixels.clear()
+	
+func check_limit(new_position):
+	#check if the mouse is directly over a old section, (make previous branch a wall)
+	if previous_pixels.size() == stored_pixel_limit: #start checking when some amount is already drawn
+		if not new_position in previous_pixels: #ignore just recently painted pixels
+			end_click() #terminate 
+			return true
+	return false
 	
 func add_history():
 	#store the draw click, for undo
@@ -144,16 +164,17 @@ func make_branch(new_position):
 			if check_cell != -1: #check collision
 				collide_position = new_coords
 			elif check_cell != tile_types["wall"]: #dont draw over wall and self
-				if (new_position != local_to_map(previous_mouse_position)): 
+				if (new_position != local_to_map(previous_mouse_position) or first_click): 
 					#prevent drawing on itself, like a wall
 						draw_counter-=1
+						
 						set_cell(new_coords, tile_types["tree"], current_tree)
 						
 						if previous_pixels.size() >= stored_pixel_limit:
 							previous_pixels.pop_front()
 						previous_pixels.append(new_coords)
 			
-	
+	first_click = false
 	check_collision_type(collide_position)
 		
 func check_collision_type(collide_position):
@@ -204,7 +225,8 @@ func calculate_mouse_direction():
 	
 #returns all adjacent cells to pivot_position
 func flood_select(pivot_position):
-	if(get_cell_source_id(pivot_position) == -1): return []
+	var cell_id = get_cell_source_id(pivot_position)
+	if(cell_id == -1): return []
 	
 	var tree_color = get_cell_atlas_coords(pivot_position)
 	
@@ -217,7 +239,7 @@ func flood_select(pivot_position):
 		
 	while search_list.size() > 0:
 		var current_position = search_list.keys()[0]
-		if get_cell_source_id(current_position) != -1 and get_cell_atlas_coords(current_position) == tree_color:
+		if get_cell_source_id(current_position) == cell_id and get_cell_atlas_coords(current_position) == tree_color:
 			flood_cells.append(current_position)
 			
 			for next_position in get_surrounding_cells(current_position):
