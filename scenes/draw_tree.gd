@@ -5,6 +5,7 @@ var current_tree = null
 var draw_flag = true
 var set_draw_counter = 200
 var draw_counter = set_draw_counter
+var branch_flag = false # Flag that checks if a branch is successfully being drawn
 
 var tile_types = {
 	"tree":0,
@@ -57,7 +58,7 @@ func _process(delta: float) -> void:
 		return
 
 	var mouse_pos = get_local_mouse_position()
-	print(draw_counter)
+	print(branch_counter)
 	
 	if branch_counter>0:
 		mouse_highlight(mouse_pos)
@@ -104,16 +105,19 @@ func click_held(mouse_pos):
 				if(check_cell != -1 and check_cell != tile_types["wall"]):
 					if get_cell_atlas_coords(new_position+adj_position) == current_tree:
 						if (draw_flag):
+							branch_flag = true
 							make_branch(new_position)
 							break
 		if draw_counter<0:
 			draw_flag= false
+		
 			
 func click_released():
-	if Input.is_action_just_released("draw"):
+	if Input.is_action_just_released("draw") and branch_flag:
 		end_click()
 		
 func end_click():
+	branch_flag = false
 	draw_flag= true
 	branch_counter-=1
 	draw_counter = set_draw_counter
