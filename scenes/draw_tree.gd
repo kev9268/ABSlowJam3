@@ -3,8 +3,6 @@ extends TileMapLayer
 var tree_children
 var current_root = null
 var draw_flag = true
-var set_draw_counter = 200
-var draw_counter = set_draw_counter
 var branch_flag = false # Flag that checks if a branch is successfully being drawn
 
 var tile_types = {
@@ -17,7 +15,6 @@ var data_types = {
 
 var previous_mouse_position = Vector2(0,0)
 var draw_history = []
-var branch_counter = 5
 var first_click = false
 
 var stored_pixel_limit = 30
