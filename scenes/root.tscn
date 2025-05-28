@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://bj2vkuqi8ivt8"]
+
+[ext_resource type="Texture2D" uid="uid://cf7tsp2jgbpha" path="res://art/root_base.png" id="1_twpsu"]
+[ext_resource type="Script" uid="uid://kkxxxw2bbq8c" path="res://scenes/root.gd" id="2_lrqlo"]
+
+[node name="Root" type="Sprite2D"]
+texture = ExtResource("1_twpsu")
+centered = false
+script = ExtResource("2_lrqlo")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+offset_left = -8.0
+offset_top = -11.0
+offset_right = 292.0
+offset_bottom = 189.0
+scale = Vector2(0.15, 0.15)
+theme_override_font_sizes/normal_font_size = 64
+text = "200"
