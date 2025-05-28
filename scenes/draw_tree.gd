@@ -1,7 +1,7 @@
 extends TileMapLayer
 
 var tree_children
-var current_tree = null
+var current_root = null
 var draw_flag = true
 var set_draw_counter = 200
 var draw_counter = set_draw_counter
@@ -10,6 +10,9 @@ var branch_flag = false # Flag that checks if a branch is successfully being dra
 var tile_types = {
 	"tree":0,
 	"wall":1,
+}
+var data_types = {
+	"root":0
 }
 
 var previous_mouse_position = Vector2(0,0)
@@ -43,10 +46,25 @@ var direction_to_vector = {
 	"northwest":Vector2i(-1,-1),
 	"none":Vector2i(0,0),
 }
+
+
+var root_data = {}
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	tree_children = get_children()
+	scan_for_tree_group()
 
+
+func scan_for_tree_group():
+	for root_node : Sprite2D in get_node("RootData").get_children():
+		var root_position = local_to_map(root_node.global_position)
+		root_data[root_node.name] = {
+			"tree_group" : flood_select(root_position, true),
+			"tree_color" : get_cell_atlas_coords(root_position),
+			"node" : root_node,
+		}
+	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -58,43 +76,53 @@ func _process(delta: float) -> void:
 		return
 
 	var mouse_pos = get_local_mouse_position()
-	print(branch_counter)
 	
-	if branch_counter>0:
-		mouse_highlight(mouse_pos)
-		click_first(mouse_pos)
-		click_held(mouse_pos)	
-		click_released()
+	if current_root == null:
+		var found_root = find_root_near_mouse(mouse_pos)
+		if(found_root != null):
+			mouse_highlight()
+		else:
+			get_parent().get_parent().cursor.modulate = Color(1.0,1.0,1.0,0)
+		click_first(mouse_pos, found_root)
 	else:
-		get_parent().get_parent().cursor.modulate = Color(1.0,1.0,1.0,0)
-		print("no more branches") # temporary probably want to show restart / undo ui when no branches will create issue
+
+		#print(get_branch_count(current_root))
+		
+		if get_branch_count(current_root) > 0:
+			click_held(mouse_pos)	
+			click_released()
+		else:
+			get_parent().get_parent().cursor.modulate = Color(1.0,1.0,1.0,0)
+			print("no more branches") # temporary probably want to show restart / undo ui when no branches will create issue
+
 
 	previous_mouse_position = mouse_pos
 
-func mouse_highlight(mouse_pos):
+func find_root_near_mouse(mouse_pos):
 	var new_position = local_to_map(mouse_pos)
 	for adj_position in surround_21: #check if valid position
 		var check_cell = get_cell_source_id(adj_position+new_position)
 		if(check_cell != -1 and check_cell != tile_types["wall"]):
-			get_parent().get_parent().cursor.modulate = Color(1.0,1.0,1.0,0.5)
-			return
-	get_parent().get_parent().cursor.modulate = Color(1.0,1.0,1.0,0)
+			var found_root = search_for_root(adj_position+new_position)
+			if(found_root != null):
+				return found_root
+	return null
+
+func mouse_highlight():
+	get_parent().get_parent().cursor.modulate = Color(1.0,1.0,1.0,0.5)
 	
-func click_first(mouse_pos):
+func click_first(mouse_pos, found_root):
 	if Input.is_action_just_pressed("draw"): #pick tree color for the first time
-		current_tree = null
-		var new_position = local_to_map(mouse_pos)
-		for adj_position in surround_21: #check if valid position
-			var check_cell = get_cell_source_id(adj_position+new_position)
-			if(check_cell != -1 and check_cell != tile_types["wall"]):
-				current_tree = get_cell_atlas_coords(adj_position+new_position)
-				add_history()
-				first_click = true
-				break
+		current_root = found_root
+		if current_root != null:
+			add_history()
+		first_click = true
 				
 func click_held(mouse_pos):
 	if Input.is_action_pressed("draw"): #draw the color
-		if(current_tree != null):
+		if(current_root != null):
+			if get_draw_count(current_root) < 0:
+				draw_flag= false
 			var new_position = local_to_map(mouse_pos)
 			
 			if check_limit(new_position):
@@ -103,13 +131,12 @@ func click_held(mouse_pos):
 			for adj_position in surround_21:
 				var check_cell = get_cell_source_id(adj_position+new_position)
 				if(check_cell != -1 and check_cell != tile_types["wall"]):
-					if get_cell_atlas_coords(new_position+adj_position) == current_tree:
+					if get_cell_atlas_coords(new_position+adj_position) == root_data[current_root]["tree_color"]:
 						if (draw_flag):
 							branch_flag = true
 							make_branch(new_position)
 							break
-		if draw_counter<0:
-			draw_flag= false
+		
 		
 			
 func click_released():
@@ -117,13 +144,19 @@ func click_released():
 		end_click()
 		
 func end_click():
+	
 	branch_flag = false
 	draw_flag= true
-	branch_counter-=1
-	draw_counter = set_draw_counter
-	current_tree = null
+	#branch_counter-=1
+	if(current_root != null):
+		add_branch_count(current_root, -1)
+		set_draw_count(current_root, get_draw_limit(current_root))
+	
+	current_root = null
 	previous_color = Vector2i(-1,-1)
 	previous_pixels.clear()
+	
+	scan_for_tree_group()
 	
 func check_limit(new_position):
 	#check if the mouse is directly over a old section, (make previous branch a wall)
@@ -140,21 +173,41 @@ func add_history():
 	for used_position in get_used_cells():
 		var index = tile_index[get_cell_source_id(used_position)] 
 		interactions[index][used_position] = get_cell_atlas_coords(used_position)
+	
+	var root_list = []
+	for root_node in root_data.keys():
+		root_list.append({
+			"root" : root_data[root_node]["node"],
+			"position" : root_data[root_node]["node"].global_position,
+			"branch" : root_data[root_node]["node"].branch_count
+		})
+	interactions["roots"] = root_list
 	draw_history.append(interactions)
+	
 
 func undo_pressed():
+	#force end click in case
 	if Input.is_action_just_pressed("undo"):
+		end_click()
 		if draw_history.size() > 0:
-			branch_counter += 1
-			
+			#branch_counter += 1
+			print("test")
 			clear()
 			var world_state = draw_history.pop_back()
+			
+			for root_node in world_state["roots"]:
+				root_node["root"].branch_count = root_node["branch"]
+				root_node["root"].global_position = root_node["position"]
+				update_root_display(root_node["root"])
+			
 			for type in tile_types.keys():
 				for used_position in world_state[type].keys():
 					set_cell(used_position, tile_types[type], world_state[type][used_position])
 				
 			previous_color = Vector2i(-1,-1)
 			previous_pixels.clear()
+			
+			scan_for_tree_group()
 		return true
 	return false
 
@@ -163,29 +216,35 @@ func make_branch(new_position):
 	for adj_position in surround_eight:
 		var new_coords = adj_position+new_position
 		
-		if get_cell_atlas_coords(new_coords) != current_tree: #dont draw on self, prevent consumuption
+		if get_cell_atlas_coords(new_coords) != root_data[current_root]["tree_color"]: #dont draw on self, prevent consumuption
 			var check_cell = get_cell_source_id(new_coords)
-			if check_cell != -1: #check collision
-				collide_position = new_coords
-			elif check_cell != tile_types["wall"]: #dont draw over wall and self
+			if check_cell != tile_types["wall"]: #dont draw over wall and self
+				if check_cell != -1: #check collision
+					if not check_collision_type(new_coords):
+						return
 				if (new_position != local_to_map(previous_mouse_position) or first_click): 
 					#prevent drawing on itself, like a wall
-						draw_counter-=1
-						
-						set_cell(new_coords, tile_types["tree"], current_tree)
-						
-						if previous_pixels.size() >= stored_pixel_limit:
-							previous_pixels.pop_front()
-						previous_pixels.append(new_coords)
+					add_draw_count(current_root, -1)
+					update_root_display(root_data[current_root]["node"])
+					
+					set_cell(new_coords, tile_types["tree"], root_data[current_root]["tree_color"])
+					
+					if previous_pixels.size() >= stored_pixel_limit:
+						previous_pixels.pop_front()
+					previous_pixels.append(new_coords)
 			
 	first_click = false
-	check_collision_type(collide_position)
 		
 func check_collision_type(collide_position):
 	if(collide_position != null):
 		if(get_cell_source_id(collide_position) == tile_types["tree"]): #collision is a tree, push it
 			var push_position = direction_to_vector[calculate_mouse_direction()]
-			move_selected_cells(flood_select(collide_position), push_position)
+			var flood_info = flood_select(collide_position, false, true)
+			if(move_selected_cells(flood_info[1], push_position)):
+				for root in flood_info[0]:
+					root_data[root]["node"].global_position += Vector2(push_position)
+				return true
+	return false
 		
 		
 func move_selected_cells(list_of_cells, offset):
@@ -193,11 +252,12 @@ func move_selected_cells(list_of_cells, offset):
 	for cell in list_of_cells: #clear the cells
 		var move_next = get_cell_atlas_coords(cell+offset)
 		if(move_next != Vector2i(-1,-1) and move_next != tree_color):
-			return
+			return false
 	for cell in list_of_cells:
 		set_cell(cell)
 	for cell in list_of_cells:
 		set_cell(cell+offset, 0, tree_color)
+	return true
 		
 var octants = [PI/8, (3*PI)/8, (5*PI)/8, (7*PI)/8]
 func calculate_mouse_direction():
@@ -228,7 +288,7 @@ func calculate_mouse_direction():
 	return direction
 	
 #returns all adjacent cells to pivot_position
-func flood_select(pivot_position):
+func flood_select(pivot_position, edge_only = false, find_root = false):
 	var cell_id = get_cell_source_id(pivot_position)
 	if(cell_id == -1): return []
 	
@@ -237,6 +297,7 @@ func flood_select(pivot_position):
 	var flood_cells = [pivot_position]
 	var search_list = {}
 	var visited_list = {pivot_position : null}
+	var roots_found = []
 	
 	for initial_position in get_surrounding_cells(pivot_position):
 		search_list[initial_position] = null
@@ -244,7 +305,13 @@ func flood_select(pivot_position):
 	while search_list.size() > 0:
 		var current_position = search_list.keys()[0]
 		if get_cell_source_id(current_position) == cell_id and get_cell_atlas_coords(current_position) == tree_color:
-			flood_cells.append(current_position)
+			
+			if(edge_only == false or not check_adj_is_same(tree_color, current_position)):
+				flood_cells.append(current_position)
+				if(find_root):
+					for root_name in root_data.keys():
+						if current_position == local_to_map(root_data[root_name]["node"].global_position):
+							roots_found.append(root_name)
 			
 			for next_position in get_surrounding_cells(current_position):
 				if not next_position in visited_list.keys():
@@ -252,4 +319,45 @@ func flood_select(pivot_position):
 				
 		search_list.erase(current_position)
 		visited_list[current_position] = null
+		
+	if(find_root):
+		return [roots_found, flood_cells]
 	return flood_cells
+	
+func check_adj_is_same(tree_color, current_position):
+	for adj_cell in get_surrounding_cells(current_position):
+		if(get_cell_atlas_coords(adj_cell) != tree_color):
+			return false
+	return true
+	
+func search_for_root(target_position):
+	for root_name in root_data.keys():
+		var root_group = root_data[root_name]["tree_group"]
+		if(target_position in root_group):
+			return root_name
+	return null
+	
+func update_root_display(found_root):
+	found_root.update_text()
+
+func get_branch_count(found_root):
+	if(found_root == null): return -1
+	return root_data[found_root]["node"].branch_count
+
+func get_draw_count(root_name):
+	return root_data[root_name]["node"].draw_count
+	
+func get_draw_limit(root_name):
+	return root_data[root_name]["node"].draw_limit
+	
+func add_branch_count(root_name, value):
+	root_data[root_name]["node"].branch_count += value
+	update_root_display(root_data[root_name]["node"])
+
+func add_draw_count(root_name, value):
+	root_data[root_name]["node"].draw_count += value
+	update_root_display(root_data[root_name]["node"])
+	
+func set_draw_count(root_name, value):
+	root_data[root_name]["node"].draw_count = value
+	update_root_display(root_data[root_name]["node"])
