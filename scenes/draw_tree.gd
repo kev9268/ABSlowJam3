@@ -219,7 +219,7 @@ func make_branch(new_position):
 				if check_cell != -1: #check collision
 					if not check_collision_type(new_coords):
 						return
-				if (new_position != local_to_map(previous_mouse_position) or first_click): 
+				elif (new_position != local_to_map(previous_mouse_position) or first_click): 
 					#prevent drawing on itself, like a wall
 					add_draw_count(current_root, -1)
 					update_root_display(root_data[current_root]["node"])
