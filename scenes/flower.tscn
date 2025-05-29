@@ -1,0 +1,95 @@
+[gd_scene load_steps=15 format=3 uid="uid://disf0hll1h8fu"]
+
+[ext_resource type="Texture2D" uid="uid://co1qjrah413kw" path="res://art/flower-Sheet.png" id="1_8x8dx"]
+[ext_resource type="Script" uid="uid://2stqheh8ckrk" path="res://scenes/flower_node.gd" id="2_yoh7s"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yoh7s"]
+atlas = ExtResource("1_8x8dx")
+region = Rect2(0, 0, 9, 9)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_agc10"]
+atlas = ExtResource("1_8x8dx")
+region = Rect2(9, 0, 9, 9)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rqhtc"]
+atlas = ExtResource("1_8x8dx")
+region = Rect2(18, 0, 9, 9)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ym8cu"]
+atlas = ExtResource("1_8x8dx")
+region = Rect2(27, 0, 9, 9)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1ahwj"]
+atlas = ExtResource("1_8x8dx")
+region = Rect2(36, 0, 9, 9)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bv3ss"]
+atlas = ExtResource("1_8x8dx")
+region = Rect2(45, 0, 9, 9)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vlpni"]
+atlas = ExtResource("1_8x8dx")
+region = Rect2(54, 0, 9, 9)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_17csd"]
+atlas = ExtResource("1_8x8dx")
+region = Rect2(63, 0, 9, 9)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tucwa"]
+atlas = ExtResource("1_8x8dx")
+region = Rect2(72, 0, 9, 9)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jm4k8"]
+atlas = ExtResource("1_8x8dx")
+region = Rect2(81, 0, 9, 9)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_34oqi"]
+atlas = ExtResource("1_8x8dx")
+region = Rect2(90, 0, 9, 9)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6s0i7"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yoh7s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agc10")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rqhtc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ym8cu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1ahwj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bv3ss")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vlpni")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_17csd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tucwa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jm4k8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_34oqi")
+}],
+"loop": false,
+"name": &"default",
+"speed": 10.0
+}]
+
+[node name="Flower" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_6s0i7")
+offset = Vector2(0.5, 0.5)
+script = ExtResource("2_yoh7s")
+metadata/type = "flower"

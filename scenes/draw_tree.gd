@@ -46,6 +46,7 @@ var direction_to_vector = {
 
 
 var root_data = {}
+var items_collected = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -179,7 +180,12 @@ func add_history():
 			"branch" : root_data[root_node]["node"].branch_count
 		})
 	interactions["roots"] = root_list
+	
+	interactions["collected"] = items_collected.duplicate()
+	items_collected.clear()
+	
 	draw_history.append(interactions)
+	
 	
 
 func undo_pressed():
@@ -188,7 +194,6 @@ func undo_pressed():
 		end_click()
 		if draw_history.size() > 0:
 			#branch_counter += 1
-			print("test")
 			clear()
 			var world_state = draw_history.pop_back()
 			
@@ -200,7 +205,15 @@ func undo_pressed():
 			for type in tile_types.keys():
 				for used_position in world_state[type].keys():
 					set_cell(used_position, tile_types[type], world_state[type][used_position])
-				
+			
+			var remove_collected = items_collected.duplicate()
+			items_collected = world_state["collected"]
+
+			
+			for item in remove_collected: 
+				if item.has_meta("type") and item.get_meta("type") == "flower":
+					item.reset_flower()
+			
 			previous_color = Vector2i(-1,-1)
 			previous_pixels.clear()
 			
@@ -358,3 +371,6 @@ func add_draw_count(root_name, value):
 func set_draw_count(root_name, value):
 	root_data[root_name]["node"].draw_count = value
 	update_root_display(root_data[root_name]["node"])
+	
+func collect_flower(position_collected, flower_node):
+	items_collected.append(flower_node)

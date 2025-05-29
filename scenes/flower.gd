@@ -5,11 +5,14 @@ var pos = Vector2i(0,0)
 var tree_tileset = null
 var buds = null
 #.get_node("Layers/Tree")
+var flower_scene : PackedScene = load("res://scenes/flower.tscn")
 
 var tile_types = {
 	"tree":0,
 	"wall":1,
 }
+
+var flower_data = {}
 
 func _ready() -> void:
 	tree_tileset = get_node("../Tree")
@@ -17,18 +20,26 @@ func _ready() -> void:
 	print(buds)
 	print(tree_tileset)
 	
+	for bud in buds:
+		var flower_node = flower_scene.instantiate()
+		flower_node.global_position = bud
+		flower_data[bud] = flower_node
+		$FlowerData.add_child(flower_node)
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	var i = 0
 	for bud in buds:
-		
+		if flower_data[bud].collected: continue
 		for adj_position in surround_eight:
 			var check_cell = tree_tileset.get_cell_source_id(adj_position+bud)
 			if(check_cell != -1 and check_cell == tile_types["tree"]):
-				print("blossom " + str(i))
+				flower_data[bud].collect_flower()
+				tree_tileset.collect_flower(check_cell, flower_data[bud])
+				#print("blossom " + str(i))
 				break
-			else:
-				print("nothing " + str(i))
+			#else:
+				#print("nothing " + str(i))
 		i+=1
 		
 			
