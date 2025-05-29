@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://cd0yydf3e153h"]
+[gd_scene load_steps=3 format=3 uid="uid://cd0yydf3e153h"]
 
 [ext_resource type="Script" uid="uid://daefnn170chbq" path="res://scenes/level_hub.gd" id="1_o1g7o"]
+[ext_resource type="PackedScene" uid="uid://bevx43r3iepfw" path="res://scenes/test_level.tscn" id="3_73tgf"]
 
 [node name="LevelHub" type="Node2D"]
 script = ExtResource("1_o1g7o")
@@ -12,5 +13,7 @@ offset_right = 214.0
 offset_bottom = 108.0
 theme_override_font_sizes/font_size = 8
 text = "test level"
+
+[node name="TestLevel" parent="." instance=ExtResource("3_73tgf")]
 
 [connection signal="button_up" from="Button" to="." method="change_level" binds= [0]]
