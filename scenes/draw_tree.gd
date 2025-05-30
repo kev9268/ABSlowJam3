@@ -46,22 +46,31 @@ var direction_to_vector = {
 
 
 var root_data = {}
+#var items_collected = {}
+var history_collected = {}
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	tree_children = get_children()
-	scan_for_tree_group()
+	scan_for_tree_group(true)
 
 
-func scan_for_tree_group():
+func scan_for_tree_group(initialize = false):
 	for root_node : Sprite2D in get_node("RootData").get_children():
 		var root_position = local_to_map(root_node.global_position)
-		root_data[root_node.name] = {
-			"tree_group" : flood_select(root_position, true),
-			"tree_color" : get_cell_atlas_coords(root_position),
-			"node" : root_node,
-		}
-	
+		
+		if(initialize):
+			root_data[root_node.name] = {
+				"tree_group" : flood_select(root_position, true),
+				"tree_color" : get_cell_atlas_coords(root_position),
+				"node" : root_node,
+				"collection" : {},
+			}
+		else:
+			root_data[root_node.name]["tree_group"] = flood_select(root_position, true)
+			root_data[root_node.name]["tree_color"] = get_cell_atlas_coords(root_position)
+			root_data[root_node.name]["node"] = root_node
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -73,6 +82,9 @@ func _process(delta: float) -> void:
 		return
 
 	var mouse_pos = get_local_mouse_position()
+	
+	#for root_name in root_data.keys():
+	#	print(root_data[root_name]["collection"])
 	
 	if current_root == null:
 		var found_root = find_root_near_mouse(mouse_pos)
@@ -143,7 +155,7 @@ func click_released():
 func end_click():
 	
 	branch_flag = false
-	draw_flag= true
+	draw_flag = true
 	#branch_counter-=1
 	if(current_root != null):
 		add_branch_count(current_root, -1)
@@ -176,10 +188,20 @@ func add_history():
 		root_list.append({
 			"root" : root_data[root_node]["node"],
 			"position" : root_data[root_node]["node"].global_position,
-			"branch" : root_data[root_node]["node"].branch_count
+			"branch" : root_data[root_node]["node"].branch_count,
+			"collection" : root_data[root_node]["collection"].duplicate(true)
 		})
+
 	interactions["roots"] = root_list
+	
+	#var collected = {}
+	#for item in items_collected:
+	#	collected[item] = item.global_position
+	#interactions["collected"] = collected
+	#items_collected.clear()
+	
 	draw_history.append(interactions)
+	
 	
 
 func undo_pressed():
@@ -188,19 +210,48 @@ func undo_pressed():
 		end_click()
 		if draw_history.size() > 0:
 			#branch_counter += 1
-			print("test")
 			clear()
 			var world_state = draw_history.pop_back()
 			
+			
+			var position_difference = Vector2(0,0)
 			for root_node in world_state["roots"]:
 				root_node["root"].branch_count = root_node["branch"]
+				position_difference = root_node["position"] - root_node["root"].global_position
 				root_node["root"].global_position = root_node["position"]
 				update_root_display(root_node["root"])
+				
+				#undo collectables
+				for item in root_data[root_node["root"].name]["collection"].keys():
+					#check for differences
+					var just_added = false
+					if not item in root_node["collection"].keys():
+						just_added = true
+						
+					if item.has_meta("type") and item.get_meta("type") == "flower":
+						if just_added:
+							item.reset_flower()
+							root_data[root_node["root"].name]["collection"].erase(item)
+						else:
+							var old_position = root_node["collection"][item]["position"]
+							item.global_position = Vector2(old_position) 
+							root_data[root_node["root"].name]["collection"][item]["position"] = old_position
+					
+					#{
+					#	"root" : root_node["root"].name,
+					#	"position" : root_node["collection"][item][""],
+					#	"just_added" : root_node["collection"]
+					#}
+			#print(items_collected)
+			#print(history_collected)
+				
 			
 			for type in tile_types.keys():
 				for used_position in world_state[type].keys():
 					set_cell(used_position, tile_types[type], world_state[type][used_position])
-				
+			#print(remove_collected)
+
+			
 			previous_color = Vector2i(-1,-1)
 			previous_pixels.clear()
 			
@@ -238,8 +289,7 @@ func check_collision_type(collide_position):
 			var push_position = direction_to_vector[calculate_mouse_direction()]
 			var flood_info = flood_select(collide_position, false, true)
 			if(move_selected_cells(flood_info[1], push_position)):
-				for root in flood_info[0]:
-					root_data[root]["node"].global_position += Vector2(push_position)
+				move_attachments(flood_info[0], push_position)
 				return true
 	return false
 		
@@ -255,6 +305,14 @@ func move_selected_cells(list_of_cells, offset):
 	for cell in list_of_cells:
 		set_cell(cell+offset, 0, tree_color)
 	return true
+	
+func move_attachments(roots, offset):
+	for root in roots:
+		root_data[root]["node"].global_position += Vector2(offset)
+		#print(root_data[root]["collection"])
+		for collection in root_data[root]["collection"].keys():
+			collection.global_position += Vector2(offset)
+			root_data[root]["collection"][collection]["position"] += local_to_map(offset)
 		
 var octants = [PI/8, (3*PI)/8, (5*PI)/8, (7*PI)/8]
 func calculate_mouse_direction():
@@ -358,3 +416,23 @@ func add_draw_count(root_name, value):
 func set_draw_count(root_name, value):
 	root_data[root_name]["node"].draw_count = value
 	update_root_display(root_data[root_name]["node"])
+	
+func collect_flower(position_collected, flower_node, branch_position):
+	
+	scan_for_tree_group()
+	var root_name = search_for_root(position_collected)
+	for adj_position in surround_eight:
+		if root_name == null:
+			root_name = search_for_root(position_collected+adj_position)
+	if(root_name == null):
+		if current_root == null:
+			print("function collect_flower: likely a bug")
+			return
+		root_name = current_root
+	
+	var flower_data = {
+		"root" : root_name,
+		"position" : position_collected,
+	}
+	#items_collected[flower_node] = flower_data
+	root_data[root_name]["collection"][flower_node] = flower_data
