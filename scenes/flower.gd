@@ -2,7 +2,7 @@ extends TileMapLayer
 
 var surround_eight = [Vector2i(-1,-1),Vector2i(-1,0),Vector2i(-1,1),Vector2i(0,-1),Vector2i(0,0),Vector2i(0,1),Vector2i(1,-1),Vector2i(1,0),Vector2i(1,1)]
 var pos = Vector2i(0,0)
-var tree_tileset = null
+var tree_tileset : TileMapLayer = null
 var buds = null
 #.get_node("Layers/Tree")
 var flower_scene : PackedScene = load("res://scenes/flower.tscn")
@@ -35,7 +35,7 @@ func _process(delta: float) -> void:
 			var check_cell = tree_tileset.get_cell_source_id(adj_position+bud)
 			if(check_cell != -1 and check_cell == tile_types["tree"]):
 				flower_data[bud].collect_flower()
-				tree_tileset.collect_flower(check_cell, flower_data[bud])
+				tree_tileset.collect_flower(bud, flower_data[bud], check_cell)
 				#print("blossom " + str(i))
 				break
 			#else:
