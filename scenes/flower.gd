@@ -33,7 +33,7 @@ func _process(delta: float) -> void:
 		if flower_data[bud].collected: continue
 		for adj_position in surround_eight:
 			var check_cell = tree_tileset.get_cell_source_id(adj_position+bud)
-			if(check_cell != -1 and check_cell == tile_types["tree"]):
+			if(check_cell == tile_types["tree"]):
 				flower_data[bud].collect_flower()
 				tree_tileset.collect_flower(bud, flower_data[bud], check_cell)
 				#print("blossom " + str(i))
