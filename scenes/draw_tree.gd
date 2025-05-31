@@ -2,6 +2,7 @@ extends TileMapLayer
 
 var tree_children
 var current_root = null
+var recent_pushed_root = null
 var draw_flag = true
 var branch_flag = false # Flag that checks if a branch is successfully being drawn
 
@@ -17,12 +18,14 @@ var previous_mouse_position = Vector2(0,0)
 var draw_history = []
 var first_click = false
 
-var stored_pixel_limit = 30
+
 var previous_color = Vector2i(-1,-1)
-var previous_pixels = []
+var stored_pixel_limit = 30
+var current_stroke_pixels = []
 
 var cursor : Sprite2D
 
+#not 25 because those 4 corners are not diagonal attached
 var surround_21 = [
 					Vector2i(-2,-1),Vector2i(-2,0),Vector2i(-2,1),
 	Vector2i(-1,-2),Vector2i(-1,-1),Vector2i(-1,0),Vector2i(-1,1),Vector2i(-1,2),
@@ -46,13 +49,13 @@ var direction_to_vector = {
 
 
 var root_data = {}
-#var items_collected = {}
 var history_collected = {}
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	tree_children = get_children()
 	scan_for_tree_group(true)
+	#draw_branch_line(Vector2(5,106), Vector2(63,123))
 
 
 func scan_for_tree_group(initialize = false):
@@ -72,6 +75,7 @@ func scan_for_tree_group(initialize = false):
 			root_data[root_node.name]["node"] = root_node
 
 
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
@@ -83,26 +87,18 @@ func _process(delta: float) -> void:
 
 	var mouse_pos = get_local_mouse_position()
 	
-	#for root_name in root_data.keys():
-	#	print(root_data[root_name]["collection"])
-	
 	if current_root == null:
 		var found_root = find_root_near_mouse(mouse_pos)
 		if(found_root != null):
-			mouse_highlight()
-		else:
-			get_parent().get_parent().cursor.modulate = Color(1.0,1.0,1.0,0)
-		click_first(mouse_pos, found_root)
+			mouse_highlight(true)
+			if get_branch_count(found_root) > 0:
+				click_first(mouse_pos, found_root)
+			else:
+				mouse_highlight(false)
+				print("no more branches") # temporary probably want to show restart / undo ui when no branches will create issue
 	else:
-
-		#print(get_branch_count(current_root))
-		
-		if get_branch_count(current_root) > 0:
-			click_held(mouse_pos)	
-			click_released()
-		else:
-			get_parent().get_parent().cursor.modulate = Color(1.0,1.0,1.0,0)
-			print("no more branches") # temporary probably want to show restart / undo ui when no branches will create issue
+		click_held(mouse_pos)
+		click_released()
 
 
 	previous_mouse_position = mouse_pos
@@ -110,15 +106,19 @@ func _process(delta: float) -> void:
 func find_root_near_mouse(mouse_pos):
 	var new_position = local_to_map(mouse_pos)
 	for adj_position in surround_21: #check if valid position
-		var check_cell = get_cell_source_id(adj_position+new_position)
-		if(check_cell != -1 and check_cell != tile_types["wall"]):
-			var found_root = search_for_root(adj_position+new_position)
+		var adjacent_position = adj_position+new_position
+		var check_cell = get_cell_source_id(adjacent_position)
+		if(check_cell == tile_types["tree"]):
+			var found_root = search_for_root(adjacent_position)
 			if(found_root != null):
 				return found_root
 	return null
 
-func mouse_highlight():
-	get_parent().get_parent().cursor.modulate = Color(1.0,1.0,1.0,0.5)
+func mouse_highlight(active):
+	if active:
+		get_parent().get_parent().cursor.modulate = Color(1.0,1.0,1.0,0.5)
+	else:
+		get_parent().get_parent().cursor.modulate = Color(1.0,1.0,1.0,0.0)
 	
 func click_first(mouse_pos, found_root):
 	if Input.is_action_just_pressed("draw"): #pick tree color for the first time
@@ -129,50 +129,81 @@ func click_first(mouse_pos, found_root):
 				
 func click_held(mouse_pos):
 	if Input.is_action_pressed("draw"): #draw the color
-		if(current_root != null):
-			if get_draw_count(current_root) < 0:
-				draw_flag= false
-			var new_position = local_to_map(mouse_pos)
-			
-			if check_limit(new_position):
+		
+		if get_draw_count(current_root) < 0:
+			draw_flag = false
+			return 
+		#drawing smoother
+		#get distance
+		#draw_branch_line(previous_mouse_position, mouse_pos)
+		#return
+		var distance = mouse_pos - previous_mouse_position
+		var step = max(abs(distance.x), abs(distance.y))
+		var offset = 1.0 / step
+		var weight = 0 #addition is cheaper
+		for stepping in range(0, step+1, 1):
+			var interpolated_position = local_to_map(previous_mouse_position.lerp(mouse_pos, weight))
+			weight += offset 
+			#check if draw on itself in the same stroke or draw on its self at all
+			if check_limit(interpolated_position):
 				return
 			
 			for adj_position in surround_21:
-				var check_cell = get_cell_source_id(adj_position+new_position)
-				if(check_cell != -1 and check_cell != tile_types["wall"]):
-					if get_cell_atlas_coords(new_position+adj_position) == root_data[current_root]["tree_color"]:
+				var adjacent_position = adj_position+interpolated_position
+				var check_cell = get_cell_source_id(adjacent_position)
+				
+				if(check_cell == tile_types["tree"]): #check if the future draw will be next to the tree color, checks in the 21 different 
+					if get_cell_atlas_coords(adjacent_position) == root_data[current_root]["tree_color"]:
+						
 						if (draw_flag):
 							branch_flag = true
-							make_branch(new_position)
+							make_branch(interpolated_position)
 							break
 		
-		
+func draw_branch_line(pos1, pos2):
+	var distance = pos2 - pos1
+	var step = max(abs(distance.x), abs(distance.y))
+	for stepping in range(0, step+1, 1):
+		var weight = float(stepping) / step
+		var interpolated_position = local_to_map(pos2.lerp(pos1, weight))
+		#check draw
+		for adj_position in surround_eight:
+			var new_coords = adj_position+interpolated_position
+			set_cell(new_coords, tile_types["tree"], Vector2(0,0))
 			
 func click_released():
 	if Input.is_action_just_released("draw") and branch_flag:
 		end_click()
 		
 func end_click():
-	
 	branch_flag = false
 	draw_flag = true
-	#branch_counter-=1
+	
 	if(current_root != null):
 		add_branch_count(current_root, -1)
 		set_draw_count(current_root, get_draw_limit(current_root))
 	
 	current_root = null
+	recent_pushed_root = null
 	previous_color = Vector2i(-1,-1)
-	previous_pixels.clear()
-	
+	current_stroke_pixels.clear()
 	scan_for_tree_group()
 	
 func check_limit(new_position):
-	#check if the mouse is directly over a old section, (make previous branch a wall)
-	if previous_pixels.size() == stored_pixel_limit: #start checking when some amount is already drawn
-		if not new_position in previous_pixels: #ignore just recently painted pixels
-			end_click() #terminate 
+	#check if the mouse is directly over it's current brush section, (make previous branch a wall)
+	for i in range(0, current_stroke_pixels.size()-stored_pixel_limit):
+		var check_position = current_stroke_pixels[i]
+		if (new_position == check_position):
+			end_click()
 			return true
+	#check if the mouse is directly over old branch section, (make previous branch a wall)
+	if(current_stroke_pixels.size() >= stored_pixel_limit):
+		var root = search_for_root(new_position)
+
+		if (root == current_root):
+			end_click()
+			return true
+			
 	return false
 	
 func add_history():
@@ -191,14 +222,7 @@ func add_history():
 			"branch" : root_data[root_node]["node"].branch_count,
 			"collection" : root_data[root_node]["collection"].duplicate(true)
 		})
-
 	interactions["roots"] = root_list
-	
-	#var collected = {}
-	#for item in items_collected:
-	#	collected[item] = item.global_position
-	#interactions["collected"] = collected
-	#items_collected.clear()
 	
 	draw_history.append(interactions)
 	
@@ -209,7 +233,7 @@ func undo_pressed():
 	if Input.is_action_just_pressed("undo"):
 		end_click()
 		if draw_history.size() > 0:
-			#branch_counter += 1
+
 			clear()
 			var world_state = draw_history.pop_back()
 			
@@ -236,25 +260,12 @@ func undo_pressed():
 							var old_position = root_node["collection"][item]["position"]
 							item.global_position = Vector2(old_position) 
 							root_data[root_node["root"].name]["collection"][item]["position"] = old_position
-					
-					#{
-					#	"root" : root_node["root"].name,
-					#	"position" : root_node["collection"][item][""],
-					#	"just_added" : root_node["collection"]
-					#}
-			#print(items_collected)
-			#print(history_collected)
-				
 			
 			for type in tile_types.keys():
 				for used_position in world_state[type].keys():
 					set_cell(used_position, tile_types[type], world_state[type][used_position])
-			#print(remove_collected)
-
 			
 			previous_color = Vector2i(-1,-1)
-			previous_pixels.clear()
-			
 			scan_for_tree_group()
 		return true
 	return false
@@ -263,23 +274,20 @@ func make_branch(new_position):
 	var collide_position = null
 	for adj_position in surround_eight:
 		var new_coords = adj_position+new_position
-		
 		if get_cell_atlas_coords(new_coords) != root_data[current_root]["tree_color"]: #dont draw on self, prevent consumuption
 			var check_cell = get_cell_source_id(new_coords)
 			if check_cell != tile_types["wall"]: #dont draw over wall and self
 				if check_cell != -1: #check collision
 					if not check_collision_type(new_coords):
-						return
-				elif (new_position != local_to_map(previous_mouse_position) or first_click): 
+						break
+				else:
 					#prevent drawing on itself, like a wall
 					add_draw_count(current_root, -1)
 					update_root_display(root_data[current_root]["node"])
 					
 					set_cell(new_coords, tile_types["tree"], root_data[current_root]["tree_color"])
 					
-					if previous_pixels.size() >= stored_pixel_limit:
-						previous_pixels.pop_front()
-					previous_pixels.append(new_coords)
+					current_stroke_pixels.append(new_coords)
 			
 	first_click = false
 		
@@ -288,6 +296,7 @@ func check_collision_type(collide_position):
 		if(get_cell_source_id(collide_position) == tile_types["tree"]): #collision is a tree, push it
 			var push_position = direction_to_vector[calculate_mouse_direction()]
 			var flood_info = flood_select(collide_position, false, true)
+			recent_pushed_root = flood_info[0][0]
 			if(move_selected_cells(flood_info[1], push_position)):
 				move_attachments(flood_info[0], push_position)
 				return true
@@ -309,7 +318,6 @@ func move_selected_cells(list_of_cells, offset):
 func move_attachments(roots, offset):
 	for root in roots:
 		root_data[root]["node"].global_position += Vector2(offset)
-		#print(root_data[root]["collection"])
 		for collection in root_data[root]["collection"].keys():
 			collection.global_position += Vector2(offset)
 			root_data[root]["collection"][collection]["position"] += local_to_map(offset)
@@ -418,18 +426,19 @@ func set_draw_count(root_name, value):
 	update_root_display(root_data[root_name]["node"])
 	
 func collect_flower(position_collected, flower_node, branch_position):
-	
-	scan_for_tree_group()
-	var root_name = search_for_root(position_collected)
+	current_stroke_pixels
+	var root_name = null
 	for adj_position in surround_eight:
-		if root_name == null:
-			root_name = search_for_root(position_collected+adj_position)
+		if position_collected+adj_position in current_stroke_pixels:
+			root_name = current_root
+			end_click()
+			break
 	if(root_name == null):
-		if current_root == null:
+		if(recent_pushed_root != null):
+			root_name = recent_pushed_root
+		else:
 			print("function collect_flower: likely a bug")
-			return
-		root_name = current_root
-	
+
 	var flower_data = {
 		"root" : root_name,
 		"position" : position_collected,
