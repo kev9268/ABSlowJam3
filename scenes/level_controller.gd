@@ -1,10 +1,96 @@
 extends Node2D
 
 var cursor : Sprite2D
+@export var level_folder : String = ""
+var screen_dimensions = Vector2i(240,135)
+var pixel_to_data = {
+	Color.hex(0x411c03ff) : "apple_tree",
+	Color.hex(0x553800ff) : "orange_tree",
+	Color.hex(0x525200ff) : "lemon_tree",
+	Color.hex(0x5f3452ff) : "cherry_tree",
+	
+	Color.hex(0xff0000ff) : "apple_fruit",
+	Color.hex(0xff7f00ff) : "orange_fruit",
+	Color.hex(0xffff00ff) : "lemon_fruit",
+	Color.hex(0xff007fff) : "cherry_fruit",
+	
+	Color.hex(0x00ff00ff) : "leaf",
+	Color.hex(0xff00ffff) : "flower",
+	
+	Color.hex(0x2a4b13ff) : "vine_1",
+	Color.hex(0x215842ff) : "vine_2",
+	
+	Color.hex(0xffffffff) : "cloud_1",
+	Color.hex(0xcbcbcbff) : "cloud_2",
+	
+	Color.hex(0xcc0000ff) : "fire_1",
+	Color.hex(0xcc3300ff) : "fire_2",
+	Color.hex(0xcc6600ff) : "fire_3",
+	
+	Color.hex(0x000000ff) : "dark",
+	
+	#Color.hex(0x00000000) : "nothing",
+}
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	cursor = $Cursor
-
+	if level_folder != "":
+		var image_path = "res://scenes/levels/" + level_folder
+		var tile_data = load(image_path + "/tree_data.png")
+		var background = load(image_path + "/background.png") 
+		$Background.texture = background
+		load_level(tile_data)
+			
+func load_level(image):
+	var data = image.get_image()
+	var tree_layer : TileMapLayer = $Layers/Tree
+	var mech_layer : TileMapLayer = $Layers/Mechanics
+	var collect_layer : TileMapLayer = $Layers/Collectable
+	#data.lock()
+	for x in range(0, screen_dimensions.x):
+		for y in range(0, screen_dimensions.y):
+			var pixel = data.get_pixel(x,y)
+			if pixel.a > 0:
+				var tile = pixel_to_data[pixel]
+				if tile == "apple_tree":
+					tree_layer.set_cell(Vector2i(x,y), 0, Vector2i(0,0))
+				elif tile == "orange_tree":
+					tree_layer.set_cell(Vector2i(x,y), 0, Vector2i(0,1))
+				elif tile == "lemon_tree":
+					tree_layer.set_cell(Vector2i(x,y), 0, Vector2i(1,0))
+				elif tile == "cherry_tree":
+					tree_layer.set_cell(Vector2i(x,y), 0, Vector2i(1,1))
+				elif tile == "leaf":
+					collect_layer.set_cell(Vector2i(x,y), 0, Vector2i(0,0))
+				elif tile == "flower":
+					collect_layer.set_cell(Vector2i(x,y), 1, Vector2i(0,0))
+				elif tile == "apple_fruit":
+					collect_layer.set_cell(Vector2i(x,y), 2, Vector2i(0,0))
+				elif tile == "orange_fruit":
+					collect_layer.set_cell(Vector2i(x,y), 3, Vector2i(0,0))
+				elif tile == "cherry_fruit":
+					collect_layer.set_cell(Vector2i(x,y), 4, Vector2i(0,0))
+				elif tile == "lemon_fruit":
+					collect_layer.set_cell(Vector2i(x,y), 5, Vector2i(0,0))
+				elif tile == "vine_1":
+					mech_layer.set_cell(Vector2i(x,y), 2, Vector2i(1,0))
+				elif tile == "vine_2":
+					mech_layer.set_cell(Vector2i(x,y), 2, Vector2i(0,0))
+				elif tile == "cloud_1":
+					mech_layer.set_cell(Vector2i(x,y), 3, Vector2i(0,0))
+				elif tile == "cloud_2":
+					mech_layer.set_cell(Vector2i(x,y), 3, Vector2i(1,0))
+				elif tile == "fire_1":
+					mech_layer.set_cell(Vector2i(x,y), 0, Vector2i(0,0))
+				elif tile == "fire_2":
+					mech_layer.set_cell(Vector2i(x,y), 0, Vector2i(1,0))
+				elif tile == "fire_3":
+					mech_layer.set_cell(Vector2i(x,y), 0, Vector2i(0,1))
+				elif tile == "dark":
+					mech_layer.set_cell(Vector2i(x,y), 1, Vector2i(0,0))
+			
+	$Layers/Tree.initialize()
+	$Layers/Collectable.initialize()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

@@ -31,7 +31,6 @@ script = ExtResource("1_exmgb")
 [node name="Layers" type="Node2D" parent="."]
 
 [node name="Mechanics" type="TileMapLayer" parent="Layers"]
-tile_map_data = PackedByteArray("AABLADcAAAAAAAAAAABLADgAAAAAAAAAAABLADkAAAAAAAAAAAA=")
 tile_set = ExtResource("2_3xj4i")
 
 [node name="Tree" type="TileMapLayer" parent="Layers"]
