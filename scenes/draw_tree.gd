@@ -425,11 +425,19 @@ func check_adj_is_same(tree_color, current_position):
 	return true
 	
 func search_for_root(target_position):
+	var root_list = []
 	for root_name in root_data.keys():
 		var root_group = root_data[root_name]["tree_group"]
 		if(target_position in root_group):
-			return root_name
-	return null
+			if get_branch_count(root_name) > 0:
+				root_list.append(root_name)
+	var closest_root = null
+	for root_name in root_list:
+		if closest_root == null:
+			closest_root = root_name
+		elif root_data[root_name]["node"].global_position.distance_squared_to(target_position) < root_data[closest_root]["node"].global_position.distance_squared_to(target_position):
+			closest_root = root_name
+	return closest_root
 	
 func update_root_display(found_root):
 	found_root.update_text()

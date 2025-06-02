@@ -31,6 +31,7 @@ script = ExtResource("1_exmgb")
 [node name="Layers" type="Node2D" parent="."]
 
 [node name="Mechanics" type="TileMapLayer" parent="Layers"]
+tile_map_data = PackedByteArray("AABLADcAAAAAAAAAAABLADgAAAAAAAAAAABLADkAAAAAAAAAAAA=")
 tile_set = ExtResource("2_3xj4i")
 
 [node name="Tree" type="TileMapLayer" parent="Layers"]
@@ -53,6 +54,11 @@ position = Vector2(193, 118)
 
 [node name="Root4" parent="Layers/Tree/RootData" instance=ExtResource("8_ric01")]
 position = Vector2(35, 95)
+
+[node name="Root5" parent="Layers/Tree/RootData" instance=ExtResource("8_ric01")]
+position = Vector2(57, 74)
+branch_count = 5
+draw_limit = 200
 
 [node name="Collectable" type="TileMapLayer" parent="Layers"]
 visibility_layer = 3
