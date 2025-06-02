@@ -1,0 +1,36 @@
+[gd_resource type="TileSet" load_steps=9 format=3 uid="uid://b8uvvrh3bpfbw"]
+
+[ext_resource type="Texture2D" uid="uid://ccsm3cfoxbb07" path="res://art/fire.png" id="1_wf32e"]
+[ext_resource type="Texture2D" uid="uid://7801fm4k3w32" path="res://art/dark_tile.png" id="2_hvylm"]
+[ext_resource type="Texture2D" uid="uid://ycvp67hw0qii" path="res://art/breakable_tile.png" id="3_nf2on"]
+[ext_resource type="Texture2D" uid="uid://beyyqovi7us4w" path="res://art/clouds.png" id="4_a501j"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dw7u0"]
+texture = ExtResource("1_wf32e")
+texture_region_size = Vector2i(1, 1)
+0:0/0 = 0
+1:0/0 = 0
+0:1/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fyxdr"]
+texture = ExtResource("2_hvylm")
+texture_region_size = Vector2i(1, 1)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kpk0m"]
+texture = ExtResource("3_nf2on")
+texture_region_size = Vector2i(1, 1)
+0:0/0 = 0
+1:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qs1vn"]
+texture = ExtResource("4_a501j")
+texture_region_size = Vector2i(1, 1)
+0:0/0 = 0
+
+[resource]
+tile_size = Vector2i(1, 1)
+sources/0 = SubResource("TileSetAtlasSource_dw7u0")
+sources/1 = SubResource("TileSetAtlasSource_fyxdr")
+sources/2 = SubResource("TileSetAtlasSource_kpk0m")
+sources/3 = SubResource("TileSetAtlasSource_qs1vn")

@@ -20,6 +20,7 @@ func _ready() -> void:
 	
 	for bud in buds:
 		var flower_node = flower_scene.instantiate()
+		flower_node.collectable_type = flower_node.collect_types[get_cell_source_id(bud)]
 		flower_node.global_position = bud
 		flower_data[bud] = flower_node
 		$FlowerData.add_child(flower_node)
@@ -34,7 +35,7 @@ func _process(delta: float) -> void:
 			if(check_cell == tile_types["tree"]):
 				var success = tree_tileset.collect_flower(bud, flower_data[bud], check_cell)
 				if success:
-					flower_data[bud].collect_flower()
+					flower_data[bud].collect_item()
 				#print("blossom " + str(i))
 				break
 			#else:

@@ -1,19 +1,23 @@
 extends AnimatedSprite2D
 
-@export var color = "white"
+var collectable_type = "flower"
+var collect_types = ["leaf","flower","apple","orange","cherry","lemon"]
 var collected = false
 var original_position
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	original_position = global_position
+	animation = collectable_type
+	if collectable_type == "leaf":
+		offset += Vector2(0, 2)
 
 
-func collect_flower():
+func collect_item():
 	collected = true
-	play("default")
+	play()
 
-func reset_flower():
+func reset_item():
 	stop()
 	collected = false
 	frame = 0
