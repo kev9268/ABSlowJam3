@@ -6,9 +6,11 @@ var recent_pushed_root = null
 var draw_flag = true
 var branch_flag = false # Flag that checks if a branch is successfully being drawn
 
-var tile_types = {
-	"tree":0,
-	"wall":1,
+var mech_types = {
+	"fire":0,
+	"dark":1,
+	"break":2,
+	"wall":3,
 }
 var data_types = {
 	"root":0
@@ -22,6 +24,8 @@ var first_click = false
 var previous_color = Vector2i(-1,-1)
 var stored_pixel_limit = 30
 var current_stroke_pixels = []
+
+var mechanic_layer : TileMapLayer
 
 var cursor : Sprite2D
 
@@ -55,6 +59,7 @@ var history_collected = {}
 func _ready() -> void:
 	tree_children = get_children()
 	scan_for_tree_group(true)
+	mechanic_layer = get_node("../Mechanics")
 	#draw_branch_line(Vector2(5,106), Vector2(63,123))
 
 
@@ -96,6 +101,8 @@ func _process(delta: float) -> void:
 			else:
 				mouse_highlight(false)
 				print("no more branches") # temporary probably want to show restart / undo ui when no branches will create issue
+		else:
+			mouse_highlight(false)
 	else:
 		click_held(mouse_pos)
 		click_released()
@@ -108,7 +115,7 @@ func find_root_near_mouse(mouse_pos):
 	for adj_position in surround_21: #check if valid position
 		var adjacent_position = adj_position+new_position
 		var check_cell = get_cell_source_id(adjacent_position)
-		if(check_cell == tile_types["tree"]):
+		if(check_cell != -1):
 			var found_root = search_for_root(adjacent_position)
 			if(found_root != null):
 				return found_root
@@ -152,13 +159,15 @@ func click_held(mouse_pos):
 				var adjacent_position = adj_position+interpolated_position
 				var check_cell = get_cell_source_id(adjacent_position)
 				
-				if(check_cell == tile_types["tree"]): #check if the future draw will be next to the tree color, checks in the 21 different 
+				if(check_cell != -1): #check if the future draw will be next to the tree color, checks in the 21 different 
 					if get_cell_atlas_coords(adjacent_position) == root_data[current_root]["tree_color"]:
 						
 						if (draw_flag):
 							branch_flag = true
 							make_branch(interpolated_position)
 							break
+							
+			apply_mechanic()
 		
 func draw_branch_line(pos1, pos2):
 	var distance = pos2 - pos1
@@ -169,7 +178,7 @@ func draw_branch_line(pos1, pos2):
 		#check draw
 		for adj_position in surround_eight:
 			var new_coords = adj_position+interpolated_position
-			set_cell(new_coords, tile_types["tree"], Vector2(0,0))
+			set_cell(new_coords, 0, Vector2(0,0))
 			
 func click_released():
 	if Input.is_action_just_released("draw") and branch_flag:
@@ -187,6 +196,7 @@ func end_click():
 	recent_pushed_root = null
 	previous_color = Vector2i(-1,-1)
 	current_stroke_pixels.clear()
+	mouse_highlight(false)
 	scan_for_tree_group()
 	
 func check_limit(new_position):
@@ -205,14 +215,18 @@ func check_limit(new_position):
 			return true
 			
 	return false
+
+func apply_mechanic():
+	for cell in mechanic_layer.get_used_cells_by_id(0): #fire tile
+		set_cell(cell)
 	
 func add_history():
 	#store the draw click, for undo
-	var interactions = {"tree":{},"wall":{}}
-	var tile_index = tile_types.keys()
+	var interactions = {"tree":{}, "break":{}}
 	for used_position in get_used_cells():
-		var index = tile_index[get_cell_source_id(used_position)] 
-		interactions[index][used_position] = get_cell_atlas_coords(used_position)
+		interactions["tree"][used_position] = get_cell_atlas_coords(used_position)
+	for used_position in mechanic_layer.get_used_cells_by_id(mech_types["break"]):
+		interactions["break"][used_position] = mechanic_layer.get_cell_atlas_coords(used_position)
 	
 	var root_list = []
 	for root_node in root_data.keys():
@@ -261,9 +275,10 @@ func undo_pressed():
 							item.global_position = Vector2(old_position) 
 							root_data[root_node["root"].name]["collection"][item]["position"] = old_position
 			
-			for type in tile_types.keys():
-				for used_position in world_state[type].keys():
-					set_cell(used_position, tile_types[type], world_state[type][used_position])
+			for used_position in world_state["tree"]:
+				set_cell(used_position, 0, world_state["tree"][used_position])
+			for used_position in world_state["break"]:
+				mechanic_layer.set_cell(used_position, mech_types["break"], world_state["break"][used_position])
 			
 			previous_color = Vector2i(-1,-1)
 			scan_for_tree_group()
@@ -275,44 +290,55 @@ func make_branch(new_position):
 	for adj_position in surround_eight:
 		var new_coords = adj_position+new_position
 		if get_cell_atlas_coords(new_coords) != root_data[current_root]["tree_color"]: #dont draw on self, prevent consumuption
+			var check_mech_cell = mechanic_layer.get_cell_source_id(new_coords)
+			if check_mech_cell != -1: continue #dont draw over anything in this layer
+				
 			var check_cell = get_cell_source_id(new_coords)
-			if check_cell != tile_types["wall"]: #dont draw over wall and self
-				if check_cell != -1: #check collision
-					if not check_collision_type(new_coords):
-						break
-				else:
-					#prevent drawing on itself, like a wall
-					add_draw_count(current_root, -1)
-					update_root_display(root_data[current_root]["node"])
-					
-					set_cell(new_coords, tile_types["tree"], root_data[current_root]["tree_color"])
-					
-					current_stroke_pixels.append(new_coords)
+			if check_cell != -1: #check collision
+				if not check_collision_type(new_coords):
+					break
+			else:
+				add_draw_count(current_root, -1)
+				update_root_display(root_data[current_root]["node"])
+				
+				set_cell(new_coords, 0, root_data[current_root]["tree_color"])
+				
+				current_stroke_pixels.append(new_coords)
 			
 	first_click = false
 		
 func check_collision_type(collide_position):
-	if(collide_position != null):
-		if(get_cell_source_id(collide_position) == tile_types["tree"]): #collision is a tree, push it
-			var push_position = direction_to_vector[calculate_mouse_direction()]
-			var flood_info = flood_select(collide_position, false, true)
+
+	if(get_cell_source_id(collide_position) == 0): #collision is a tree, push it
+		var push_position = direction_to_vector[calculate_mouse_direction()]
+		var flood_info = flood_select(collide_position, false, true)
+		if(flood_info[0].size() > 0):
 			recent_pushed_root = flood_info[0][0]
-			if(move_selected_cells(flood_info[1], push_position)):
-				move_attachments(flood_info[0], push_position)
-				return true
+		if(move_selected_cells(flood_info[1], push_position)):
+			move_attachments(flood_info[0], push_position)
+			return true
 	return false
 		
 		
 func move_selected_cells(list_of_cells, offset):
+
 	var tree_color = get_cell_atlas_coords(list_of_cells[0])
-	for cell in list_of_cells: #clear the cells
-		var move_next = get_cell_atlas_coords(cell+offset)
-		if(move_next != Vector2i(-1,-1) and move_next != tree_color):
+	var breakable_tiles = []
+	for cell in list_of_cells: #check the cells
+		var next_position = cell+offset
+		var move_next = get_cell_atlas_coords(next_position)
+		var mech_next = mechanic_layer.get_cell_source_id(next_position)
+		if(mech_next == mech_types["wall"] or (move_next != Vector2i(-1,-1) and move_next != tree_color)): #ignore non pushable
 			return false
-	for cell in list_of_cells:
+		elif(mech_next == mech_types["break"]):
+			breakable_tiles.append(next_position)
+				
+	for cell in list_of_cells: #clear those old cells
 		set_cell(cell)
 	for cell in list_of_cells:
 		set_cell(cell+offset, 0, tree_color)
+	for cell in breakable_tiles:
+		mechanic_layer.set_cell(cell)
 	return true
 	
 func move_attachments(roots, offset):
@@ -444,4 +470,7 @@ func collect_flower(position_collected, flower_node, branch_position):
 		"position" : position_collected,
 	}
 	#items_collected[flower_node] = flower_data
-	root_data[root_name]["collection"][flower_node] = flower_data
+	if root_name != null:
+		root_data[root_name]["collection"][flower_node] = flower_data
+		return true
+	return false

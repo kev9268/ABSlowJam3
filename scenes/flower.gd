@@ -17,8 +17,6 @@ var flower_data = {}
 func _ready() -> void:
 	tree_tileset = get_node("../Tree")
 	buds = get_used_cells()
-	print(buds)
-	print(tree_tileset)
 	
 	for bud in buds:
 		var flower_node = flower_scene.instantiate()
@@ -34,8 +32,9 @@ func _process(delta: float) -> void:
 		for adj_position in surround_eight:
 			var check_cell = tree_tileset.get_cell_source_id(adj_position+bud)
 			if(check_cell == tile_types["tree"]):
-				flower_data[bud].collect_flower()
-				tree_tileset.collect_flower(bud, flower_data[bud], check_cell)
+				var success = tree_tileset.collect_flower(bud, flower_data[bud], check_cell)
+				if success:
+					flower_data[bud].collect_flower()
 				#print("blossom " + str(i))
 				break
 			#else:
