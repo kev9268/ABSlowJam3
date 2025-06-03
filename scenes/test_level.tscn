@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=4 uid="uid://bevx43r3iepfw"]
+[gd_scene load_steps=26 format=4 uid="uid://bevx43r3iepfw"]
 
 [ext_resource type="Texture2D" uid="uid://b238p5fhdj702" path="res://art/pixel.png" id="1_2venv"]
 [ext_resource type="Script" uid="uid://drt1vkhdoniou" path="res://scenes/level_controller.gd" id="1_tmr53"]
@@ -11,6 +11,8 @@
 [ext_resource type="PackedScene" uid="uid://cd41i8olb8biw" path="res://scenes/root.tscn" id="5_88ety"]
 [ext_resource type="Texture2D" uid="uid://wgp6bofgdoed" path="res://art/cursor.png" id="5_qcd3b"]
 [ext_resource type="Texture2D" uid="uid://7801fm4k3w32" path="res://art/dark_tile.png" id="7_4asn1"]
+[ext_resource type="Texture2D" uid="uid://n050nky0r8ab" path="res://art/water_tile.png" id="11_kpk0m"]
+[ext_resource type="Script" uid="uid://cc3rk8m12wpkx" path="res://scenes/water.gd" id="12_qs1vn"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dw7u0"]
 texture = ExtResource("4_7gix3")
@@ -67,6 +69,16 @@ texture_region_size = Vector2i(1, 1)
 tile_size = Vector2i(1, 1)
 sources/1 = SubResource("TileSetAtlasSource_7gix3")
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_13hs1"]
+resource_name = "water"
+texture = ExtResource("11_kpk0m")
+texture_region_size = Vector2i(1, 1)
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_fptmo"]
+tile_size = Vector2i(1, 1)
+sources/1 = SubResource("TileSetAtlasSource_13hs1")
+
 [node name="TestLevel" type="Node2D"]
 script = ExtResource("1_tmr53")
 
@@ -101,6 +113,11 @@ tile_set = SubResource("TileSet_ahbqi")
 script = ExtResource("2_88ety")
 
 [node name="FlowerData" type="Node2D" parent="Layers/Flower"]
+
+[node name="Water" type="TileMapLayer" parent="Layers"]
+tile_map_data = PackedByteArray("AAAfACgAAQAAAAAAAAAMACgAAQAAAAAAAAAqACIAAQAAAAAAAAA=")
+tile_set = SubResource("TileSet_fptmo")
+script = ExtResource("12_qs1vn")
 
 [node name="Cursor" type="Sprite2D" parent="."]
 modulate = Color(1, 1, 1, 0.247059)
