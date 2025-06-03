@@ -125,6 +125,18 @@ func find_root_near_mouse(mouse_pos):
 			if(found_root != null):
 				return found_root
 	return null
+	
+func find_root_in_current_stroke(current_position):
+	var root_name = null
+	for stroke_pixel in current_stroke_pixels:
+		if current_position == stroke_pixel:
+			root_name = current_root
+			break
+	if(root_name == null):
+		if(recent_pushed_root != null):
+			root_name = recent_pushed_root
+			
+	return root_name
 
 func mouse_highlight(active):
 	if active:
@@ -271,7 +283,12 @@ func undo_pressed():
 					if not item in root_node["collection"].keys():
 						just_added = true
 						
-					if item.has_meta("type") and item.get_meta("type") == "flower":
+					if item is String and item.contains("water"):
+						if just_added:
+							print("undid")
+							get_node("../Water").set_cell(root_data[root_node["root"].name]["collection"][item], 0, Vector2i(0,0))
+							root_data[root_node["root"].name]["collection"].erase(item)
+					elif item.has_meta("type") and item.get_meta("type") == "flower":
 						if just_added:
 							item.reset_item()
 							root_data[root_node["root"].name]["collection"].erase(item)
@@ -465,7 +482,6 @@ func set_draw_count(root_name, value):
 	update_root_display(root_data[root_name]["node"])
 	
 func collect_flower(position_collected, flower_node, branch_position):
-	current_stroke_pixels
 	var root_name = null
 	for adj_position in surround_eight:
 		if position_collected+adj_position in current_stroke_pixels:
@@ -496,4 +512,13 @@ func collect_flower(position_collected, flower_node, branch_position):
 		if valid:
 			root_data[root_name]["collection"][flower_node] = flower_data
 			return true
+	return false
+	
+var unique_id = 0
+func collect_water(position_collected, root_name):
+	if root_name != null:
+		print("Added")
+		root_data[root_name]["collection"]["water" + str(unique_id)] = position_collected
+		unique_id += 1
+		return true
 	return false
