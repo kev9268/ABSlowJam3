@@ -4,6 +4,7 @@ extends Node2D
 var cursor : Sprite2D
 @export var level_folder : String = ""
 @export var music_type : int 
+
 var screen_dimensions = Vector2i(240,135)
 var pixel_to_data = {
 	Color.hex(0x411c03ff) : "apple_tree",

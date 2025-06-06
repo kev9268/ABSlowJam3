@@ -12,7 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://wgp6bofgdoed" path="res://art/cursor.png" id="5_qcd3b"]
 [ext_resource type="Texture2D" uid="uid://7801fm4k3w32" path="res://art/dark_tile.png" id="7_4asn1"]
 [ext_resource type="Texture2D" uid="uid://n050nky0r8ab" path="res://art/water_tile.png" id="11_kpk0m"]
-[ext_resource type="Script" path="res://scenes/water.gd" id="12_qs1vn"]
+[ext_resource type="Script" uid="uid://cc3rk8m12wpkx" path="res://scenes/water.gd" id="12_qs1vn"]
 [ext_resource type="PackedScene" uid="uid://r0r7cvupp33b" path="res://scenes/audio.tscn" id="14_qs1vn"]
 [ext_resource type="PackedScene" uid="uid://b6237ktkrkxpc" path="res://scenes/gui.tscn" id="15_13hs1"]
 

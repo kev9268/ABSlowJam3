@@ -1,5 +1,6 @@
 extends Node
 var paused = false
+var level_list = {}
 var player_data = {
 	"background_transparency" : 100,
 	"music" : 80,
