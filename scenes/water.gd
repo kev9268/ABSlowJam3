@@ -5,7 +5,7 @@ var tree_tileset : TileMapLayer = null
 var water_tileset: TileMapLayer = null
 var waters = null
 var water_scene : PackedScene = load("res://scenes/water.tscn")
-var moving_waters = Dictionary()
+var moving_waters = []
 var all_water_nodes = []
 
 func _ready() -> void:
@@ -24,7 +24,7 @@ func _ready() -> void:
 		ref.distance = 50 # need to make it check for off screen
 		if(move_flag):
 			ref.moving = true
-			moving_waters[ref] = ref
+			moving_waters.append(ref)
 		all_water_nodes.append(ref)
 		$WaterData.add_child(ref)
 		
@@ -33,8 +33,7 @@ func _process(delta: float) -> void:
 	waters = water_tileset.get_used_cells() #water not moving (yet), better to put here
 	
 	#Move cell of moving water
-	for pos in moving_waters:
-		var droplet = moving_waters[pos]
+	for droplet in moving_waters:
 		if (not droplet.touched):
 			water_tileset.set_cell(droplet.current_position,-1)
 			if (abs(abs(droplet.original_position.y)-abs(droplet.current_position.y))>droplet.distance):
@@ -46,18 +45,17 @@ func _process(delta: float) -> void:
 		var water_position = water_node.current_position
 		if water_node.touched: continue
 		for adj_position in surround_eight:
+			
 			var check_cell = tree_tileset.get_cell_source_id(adj_position+water_position)
 			if(check_cell == tree_tileset.data_types["root"]):
-				var root_node = tree_tileset.find_root_in_current_stroke(water_position) #this function is similar to the mouse one but works during the mouse draw
+				var root_node = tree_tileset.find_root_in_current_stroke(water_position) #find on draw
 				if (root_node == null):
-					root_node = tree_tileset.find_root_near_mouse(water_position)
-				#var tile_id = water_tileset.get_cell_source_id(water)
+					root_node = tree_tileset.find_root_near_mouse(water_position) #find on non draw
+
 				print(root_node)
 				if (root_node!=null):
-					#for ref in moving_waters: #deletes moving water
-					#if (water_node in moving_waters.keys() and moving_waters[water_node].current_position == water_position):
+
 					water_node.touched = true
-							
 					tree_tileset.add_branch_count(root_node,1) 
 					tree_tileset.collect_water(water_position, water_node, root_node)
 					print(water_tileset)

@@ -287,7 +287,6 @@ func undo_pressed():
 						
 					if item.has_meta("type") and item.get_meta("type") == "water":
 						if just_added:
-							print("undid")
 							var water_type = 0
 							if item.moving: water_type = 1
 							item.touched = false
@@ -374,7 +373,7 @@ func move_attachments(roots, offset):
 	for root in roots:
 		root_data[root]["node"].global_position += Vector2(offset)
 		for collection in root_data[root]["collection"].keys():
-			if not (collection is String):
+			if not (collection.get_meta("type") == "water"):
 				collection.global_position += Vector2(offset)
 				root_data[root]["collection"][collection]["position"] += local_to_map(offset)
 		
@@ -525,7 +524,7 @@ func collect_flower(position_collected, flower_node, branch_position):
 var unique_id = 0
 func collect_water(position_collected, water_node, root_name):
 	if root_name != null:
-		print("Added")
+		#print("Added")
 		var water_data = {
 			"root" : root_name,
 			"position" : position_collected,
