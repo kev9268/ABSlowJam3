@@ -289,14 +289,14 @@ func undo_pressed():
 						if just_added:
 							var water_type = 0
 							if item.moving: water_type = 1
-							item.touched = false
+							item.reset_item()
 							get_node("../Water").set_cell(collection_dict[item]["position"], water_type, Vector2i(0,0))
 							collection_dict.erase(item)
 						#else:
 							
 					elif item.has_meta("type") and item.get_meta("type") == "flower":
 						if just_added:
-							item.reset_flower()
+							item.reset_item()
 							collection_dict.erase(item)
 						else:
 							var old_position = root_node["collection"][item]["position"]
@@ -523,7 +523,7 @@ func collect_flower(position_collected, flower_node, branch_position):
 			return true
 	return false
 	
-var unique_id = 0
+
 func collect_water(position_collected, water_node, root_name):
 	if root_name != null:
 		#print("Added")
@@ -533,6 +533,6 @@ func collect_water(position_collected, water_node, root_name):
 			"moving" : water_node.moving,
 		}
 		root_data[root_name]["collection"][water_node] = water_data
-		unique_id += 1
+		get_parent().get_parent().play_sound("water")
 		return true
 	return false

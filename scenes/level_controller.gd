@@ -27,6 +27,9 @@ var pixel_to_data = {
 	Color.hex(0xcc3300ff) : "fire_2",
 	Color.hex(0xcc6600ff) : "fire_3",
 	
+	Color.hex(0x00ffffff) : "water",
+	Color.hex(0x0000ffff) : "water_fall",
+	
 	Color.hex(0x000000ff) : "dark",
 	
 	#Color.hex(0x00000000) : "nothing",
@@ -40,12 +43,18 @@ func _ready() -> void:
 		var background = load(image_path + "/background.png") 
 		$Background.texture = background
 		load_level(tile_data)
+	start_level()
+func start_level():
+	$Layers/Tree.initialize()
+	$Layers/Collectable.initialize()
+	$Layers/Water.initialize()
 			
 func load_level(image):
 	var data = image.get_image()
 	var tree_layer : TileMapLayer = $Layers/Tree
 	var mech_layer : TileMapLayer = $Layers/Mechanics
 	var collect_layer : TileMapLayer = $Layers/Collectable
+	var water_layer : TileMapLayer = $Layers/Water
 	#data.lock()
 	for x in range(0, screen_dimensions.x):
 		for y in range(0, screen_dimensions.y):
@@ -86,11 +95,14 @@ func load_level(image):
 					mech_layer.set_cell(Vector2i(x,y), 0, Vector2i(1,0))
 				elif tile == "fire_3":
 					mech_layer.set_cell(Vector2i(x,y), 0, Vector2i(0,1))
+				elif tile == "water":
+					water_layer.set_cell(Vector2i(x,y), 0, Vector2i(0,0))
+				elif tile == "water_fall":
+					water_layer.set_cell(Vector2i(x,y), 1, Vector2i(0,0))
 				elif tile == "dark":
 					mech_layer.set_cell(Vector2i(x,y), 1, Vector2i(0,0))
 			
-	$Layers/Tree.initialize()
-	$Layers/Collectable.initialize()
+	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -109,4 +121,6 @@ func play_sound(sound_name : String):
 		$Audio/CollectSoundFX.play()
 	elif sound_name == "win":
 		$Audio/WinSoundFX.play()
+	elif sound_name == "water":
+		$Audio/WaterSoundFX.play()
 	

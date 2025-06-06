@@ -1,7 +1,8 @@
 extends Node2D
 
 var level_list = [
-	"res://scenes/test_level.tscn"
+	"res://scenes/test_level.tscn",
+	"res://scenes/levels/image_level/template_level.tscn",
 ]
 
 # Called when the node enters the scene tree for the first time.

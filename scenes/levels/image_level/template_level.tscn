@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://s4wbntkv3r1"]
+[gd_scene load_steps=18 format=3 uid="uid://s4wbntkv3r1"]
 
 [ext_resource type="Script" uid="uid://drt1vkhdoniou" path="res://scenes/level_controller.gd" id="1_bmkqp"]
 [ext_resource type="TileSet" uid="uid://b8uvvrh3bpfbw" path="res://scenes/tilesets/mechanic_tileset.tres" id="2_6ynow"]
@@ -7,7 +7,10 @@
 [ext_resource type="PackedScene" uid="uid://cd41i8olb8biw" path="res://scenes/root.tscn" id="5_1msc6"]
 [ext_resource type="TileSet" uid="uid://cwoack1ryda05" path="res://scenes/tilesets/collectable_tileset.tres" id="6_e28s4"]
 [ext_resource type="Script" uid="uid://u647hsahymkw" path="res://scenes/flower.gd" id="7_4fer5"]
+[ext_resource type="Texture2D" uid="uid://n050nky0r8ab" path="res://art/water_tile.png" id="8_3ngcq"]
 [ext_resource type="Texture2D" uid="uid://wgp6bofgdoed" path="res://art/cursor.png" id="8_qn42a"]
+[ext_resource type="PackedScene" uid="uid://r0r7cvupp33b" path="res://scenes/audio.tscn" id="9_1sbr3"]
+[ext_resource type="Script" uid="uid://cc3rk8m12wpkx" path="res://scenes/water.gd" id="9_5sfo0"]
 
 [sub_resource type="TileMapPattern" id="TileMapPattern_paw1w"]
 tile_data = PackedInt32Array(0, 65536, 0, 65536, 65536, 0, 131072, 65536, 0, 1, 65536, 0, 65537, 65536, 0, 131073, 65536, 0, 2, 65536, 0, 65538, 65536, 0, 131074, 65536, 0)
@@ -24,6 +27,26 @@ texture_region_size = Vector2i(1, 1)
 tile_size = Vector2i(1, 1)
 sources/0 = SubResource("TileSetAtlasSource_paw1w")
 pattern_0 = SubResource("TileMapPattern_paw1w")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6b5ql"]
+resource_name = "water"
+texture = ExtResource("8_3ngcq")
+texture_region_size = Vector2i(1, 1)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ufifc"]
+resource_name = "moving_water"
+texture = ExtResource("8_3ngcq")
+texture_region_size = Vector2i(1, 1)
+0:0/0 = 0
+0:0/0/custom_data_0 = true
+
+[sub_resource type="TileSet" id="TileSet_h3xaf"]
+tile_size = Vector2i(1, 1)
+custom_data_layer_0/name = "Move"
+custom_data_layer_0/type = 1
+sources/0 = SubResource("TileSetAtlasSource_6b5ql")
+sources/1 = SubResource("TileSetAtlasSource_ufifc")
 
 [node name="Level" type="Node2D"]
 script = ExtResource("1_bmkqp")
@@ -65,6 +88,14 @@ script = ExtResource("7_4fer5")
 
 [node name="FlowerData" type="Node2D" parent="Layers/Collectable"]
 
+[node name="Water" type="TileMapLayer" parent="Layers"]
+tile_set = SubResource("TileSet_h3xaf")
+script = ExtResource("9_5sfo0")
+
+[node name="WaterData" type="Node2D" parent="Layers/Water"]
+
 [node name="Cursor" type="Sprite2D" parent="."]
 modulate = Color(1, 1, 1, 0.247059)
 texture = ExtResource("8_qn42a")
+
+[node name="Audio" parent="." instance=ExtResource("9_1sbr3")]

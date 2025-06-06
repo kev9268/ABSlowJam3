@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=4 uid="uid://bevx43r3iepfw"]
+[gd_scene load_steps=28 format=4 uid="uid://bevx43r3iepfw"]
 
 [ext_resource type="Texture2D" uid="uid://b238p5fhdj702" path="res://art/pixel.png" id="1_2venv"]
 [ext_resource type="Script" uid="uid://drt1vkhdoniou" path="res://scenes/level_controller.gd" id="1_tmr53"]
@@ -12,13 +12,8 @@
 [ext_resource type="Texture2D" uid="uid://wgp6bofgdoed" path="res://art/cursor.png" id="5_qcd3b"]
 [ext_resource type="Texture2D" uid="uid://7801fm4k3w32" path="res://art/dark_tile.png" id="7_4asn1"]
 [ext_resource type="Texture2D" uid="uid://n050nky0r8ab" path="res://art/water_tile.png" id="11_kpk0m"]
-[ext_resource type="Script" uid="uid://cc3rk8m12wpkx" path="res://scenes/water.gd" id="12_qs1vn"]
-[ext_resource type="AudioStream" uid="uid://dewd7wmmgnhp7" path="res://audio/asj_3_plain_plains.mp3" id="12_fyxdr"]
-[ext_resource type="AudioStream" uid="uid://pwdq05etwrc6" path="res://audio/mouse_click.wav" id="13_fptmo"]
-[ext_resource type="AudioStream" uid="uid://dwwdimhsxmm67" path="res://audio/collect.wav" id="14_bakr3"]
-[ext_resource type="AudioStream" uid="uid://bvyd8weiout3p" path="res://audio/undo.wav" id="15_jqmoj"]
-[ext_resource type="AudioStream" uid="uid://bdqfv5igw3qks" path="res://audio/clear.wav" id="16_ni2ok"]
 [ext_resource type="PackedScene" uid="uid://r0r7cvupp33b" path="res://scenes/audio.tscn" id="12_fyxdr"]
+[ext_resource type="Script" uid="uid://cc3rk8m12wpkx" path="res://scenes/water.gd" id="12_qs1vn"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dw7u0"]
 texture = ExtResource("4_7gix3")
@@ -122,13 +117,13 @@ position = Vector2(190, 75)
 [node name="Root3" parent="Layers/Tree/RootData" instance=ExtResource("5_88ety")]
 position = Vector2(193, 118)
 
-[node name="Flower" type="TileMapLayer" parent="Layers"]
+[node name="Collectable" type="TileMapLayer" parent="Layers"]
 visibility_layer = 3
 tile_map_data = PackedByteArray("AAARABIAAQAAAAAAAAAZACAAAQAAAAAAAAAkAA8AAQAAAAAAAAA=")
 tile_set = SubResource("TileSet_ahbqi")
 script = ExtResource("2_88ety")
 
-[node name="FlowerData" type="Node2D" parent="Layers/Flower"]
+[node name="FlowerData" type="Node2D" parent="Layers/Collectable"]
 
 [node name="Water" type="TileMapLayer" parent="Layers"]
 tile_map_data = PackedByteArray("AAAbAAoAAQAAAAAAAAAkACAAAAAAAAAAAAAHACEAAAAAAAAAAAASACQAAAAAAAAAAAA=")
