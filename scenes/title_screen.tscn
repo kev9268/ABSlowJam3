@@ -1,0 +1,37 @@
+[gd_scene load_steps=5 format=3 uid="uid://dubxrs2mnpe2c"]
+
+[ext_resource type="PackedScene" uid="uid://r0r7cvupp33b" path="res://scenes/audio.tscn" id="1_sa3yf"]
+[ext_resource type="Texture2D" uid="uid://bilov7m8pwr4t" path="res://art/ui/play_icon.png" id="2_sa3yf"]
+[ext_resource type="Texture2D" uid="uid://cia40f7ubxxpr" path="res://art/ui/setting_icon.png" id="3_mgrm8"]
+[ext_resource type="PackedScene" uid="uid://bbppmt810msmj" path="res://scenes/setting_screen.tscn" id="4_mgrm8"]
+
+[node name="TitleScreen" type="Node2D"]
+
+[node name="Audio" parent="." instance=ExtResource("1_sa3yf")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="TitleScreen" type="Control" parent="CanvasLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="PlayButton" type="TextureButton" parent="CanvasLayer/TitleScreen"]
+layout_mode = 0
+offset_left = 144.0
+offset_top = 80.0
+offset_right = 176.0
+offset_bottom = 112.0
+texture_normal = ExtResource("2_sa3yf")
+
+[node name="SettingButtion" type="TextureButton" parent="CanvasLayer/TitleScreen"]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 80.0
+offset_right = 96.0
+offset_bottom = 112.0
+texture_normal = ExtResource("3_mgrm8")
+
+[node name="SettingScreen" parent="CanvasLayer" instance=ExtResource("4_mgrm8")]

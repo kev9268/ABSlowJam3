@@ -1,0 +1,183 @@
+[gd_scene load_steps=3 format=3 uid="uid://bbppmt810msmj"]
+
+[ext_resource type="Script" uid="uid://bun8eltvsia6k" path="res://scenes/setting_screen.gd" id="1_bf80k"]
+[ext_resource type="FontFile" uid="uid://42iydnvi6hbk" path="res://pixelFJ8pt1-Modified.otf" id="2_2h4m8"]
+
+[node name="SettingScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_bf80k")
+
+[node name="ReturnButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 104.0
+offset_top = 112.0
+offset_right = 137.0
+offset_bottom = 129.0
+theme_override_fonts/font = ExtResource("2_2h4m8")
+theme_override_font_sizes/font_size = 8
+text = "Done"
+
+[node name="RightSide" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 120.0
+offset_right = 240.0
+offset_bottom = 135.0
+
+[node name="Master" type="Control" parent="RightSide"]
+layout_mode = 2
+anchors_preset = 0
+offset_left = 35.0
+offset_top = 20.0
+offset_right = 155.0
+offset_bottom = 20.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="RightSide/Master"]
+layout_mode = 0
+offset_right = 64.0
+offset_bottom = 16.0
+theme_override_fonts/normal_font = ExtResource("2_2h4m8")
+theme_override_font_sizes/normal_font_size = 8
+bbcode_enabled = true
+text = "[center]Audio 100%"
+
+[node name="HSlider" type="HSlider" parent="RightSide/Master"]
+layout_mode = 0
+offset_top = 10.0
+offset_right = 64.0
+offset_bottom = 26.0
+value = 50.0
+
+[node name="Music" type="Control" parent="RightSide"]
+layout_mode = 2
+anchors_preset = 0
+offset_left = 35.0
+offset_top = 52.0
+offset_right = 155.0
+offset_bottom = 52.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="RightSide/Music"]
+layout_mode = 0
+offset_right = 64.0
+offset_bottom = 16.0
+theme_override_fonts/normal_font = ExtResource("2_2h4m8")
+theme_override_font_sizes/normal_font_size = 8
+bbcode_enabled = true
+text = "[center]Music 100%"
+
+[node name="HSlider" type="HSlider" parent="RightSide/Music"]
+layout_mode = 0
+offset_top = 10.0
+offset_right = 64.0
+offset_bottom = 26.0
+value = 50.0
+
+[node name="Effects" type="Control" parent="RightSide"]
+layout_mode = 2
+anchors_preset = 0
+offset_left = 35.0
+offset_top = 84.0
+offset_right = 155.0
+offset_bottom = 84.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="RightSide/Effects"]
+layout_mode = 0
+offset_left = -12.0
+offset_right = 68.0
+offset_bottom = 16.0
+theme_override_fonts/normal_font = ExtResource("2_2h4m8")
+theme_override_font_sizes/normal_font_size = 8
+bbcode_enabled = true
+text = "[center]Effects 100%"
+
+[node name="HSlider" type="HSlider" parent="RightSide/Effects"]
+layout_mode = 0
+offset_top = 10.0
+offset_right = 64.0
+offset_bottom = 26.0
+value = 50.0
+
+[node name="LeftSide" type="Control" parent="."]
+anchors_preset = 0
+offset_top = 1.0
+offset_right = 120.0
+offset_bottom = 136.0
+
+[node name="None" type="Control" parent="LeftSide"]
+visible = false
+layout_mode = 2
+anchors_preset = 0
+offset_left = 16.0
+offset_top = 20.0
+offset_right = 136.0
+offset_bottom = 20.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="LeftSide/None"]
+layout_mode = 0
+offset_left = -28.0
+offset_right = 100.0
+offset_bottom = 16.0
+theme_override_fonts/normal_font = ExtResource("2_2h4m8")
+theme_override_font_sizes/normal_font_size = 8
+bbcode_enabled = true
+text = "[center]Background 100%"
+
+[node name="HSlider" type="HSlider" parent="LeftSide/None"]
+layout_mode = 0
+offset_top = 10.0
+offset_right = 64.0
+offset_bottom = 26.0
+value = 50.0
+
+[node name="Background" type="Control" parent="LeftSide"]
+layout_mode = 2
+anchors_preset = 0
+offset_left = 16.0
+offset_top = 52.0
+offset_right = 136.0
+offset_bottom = 52.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="LeftSide/Background"]
+offset_left = -28.0
+offset_right = 100.0
+offset_bottom = 16.0
+theme_override_fonts/normal_font = ExtResource("2_2h4m8")
+theme_override_font_sizes/normal_font_size = 8
+bbcode_enabled = true
+text = "[center]Background 100%"
+
+[node name="HSlider" type="HSlider" parent="LeftSide/Background"]
+layout_mode = 0
+offset_top = 10.0
+offset_right = 64.0
+offset_bottom = 26.0
+value = 50.0
+
+[node name="Effects" type="Control" parent="LeftSide"]
+visible = false
+layout_mode = 2
+anchors_preset = 0
+offset_left = 16.0
+offset_top = 84.0
+offset_right = 136.0
+offset_bottom = 84.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="LeftSide/Effects"]
+layout_mode = 0
+offset_right = 64.0
+offset_bottom = 16.0
+theme_override_fonts/normal_font = ExtResource("2_2h4m8")
+theme_override_font_sizes/normal_font_size = 8
+bbcode_enabled = true
+text = "[center]Music 100%"
+
+[node name="HSlider" type="HSlider" parent="LeftSide/Effects"]
+layout_mode = 0
+offset_top = 10.0
+offset_right = 64.0
+offset_bottom = 26.0
+value = 50.0
+
+[connection signal="value_changed" from="RightSide/Master/HSlider" to="." method="_on_master_slider_value_changed"]

@@ -1,5 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://r0r7cvupp33b"]
 
+[ext_resource type="Script" uid="uid://dauyulr3b6u2a" path="res://scenes/audio.gd" id="1_dl6it"]
 [ext_resource type="AudioStream" uid="uid://dewd7wmmgnhp7" path="res://audio/asj_3_plain_plains.mp3" id="1_wdljl"]
 [ext_resource type="AudioStream" uid="uid://pwdq05etwrc6" path="res://audio/mouse_click.wav" id="2_dl6it"]
 [ext_resource type="AudioStream" uid="uid://dwwdimhsxmm67" path="res://audio/collect.wav" id="3_8kkbo"]
@@ -8,6 +9,7 @@
 [ext_resource type="AudioStream" uid="uid://b14lum30a1576" path="res://audio/Track4_water.wav" id="6_dl6it"]
 
 [node name="Audio" type="Node2D"]
+script = ExtResource("1_dl6it")
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("1_wdljl")

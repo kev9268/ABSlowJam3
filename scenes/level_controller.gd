@@ -113,14 +113,5 @@ func cursor_follow():
 
 
 func play_sound(sound_name : String):
-	if sound_name == "click":
-		$Audio/ClickSoundFX.play()
-	elif sound_name == "undo":
-		$Audio/UndoSoundFX.play()
-	elif sound_name == "collect":
-		$Audio/CollectSoundFX.play()
-	elif sound_name == "win":
-		$Audio/WinSoundFX.play()
-	elif sound_name == "water":
-		$Audio/WaterSoundFX.play()
+	$Audio.play_sound(sound_name)
 	
