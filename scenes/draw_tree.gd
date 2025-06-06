@@ -149,6 +149,7 @@ func click_first(mouse_pos, found_root):
 	if Input.is_action_just_pressed("draw"): #pick tree color for the first time
 		current_root = found_root
 		if current_root != null:
+			#get_parent().get_parent().play_sound("click")
 			add_history()
 		first_click = true
 				
@@ -265,7 +266,7 @@ func undo_pressed():
 	if Input.is_action_just_pressed("undo"):
 		end_click()
 		if draw_history.size() > 0:
-
+			get_parent().get_parent().play_sound("undo")
 			clear()
 			var world_state = draw_history.pop_back()
 			
@@ -517,6 +518,7 @@ func collect_flower(position_collected, flower_node, branch_position):
 		
 				
 		if valid:
+			get_parent().get_parent().play_sound("collect")
 			root_data[root_name]["collection"][flower_node] = flower_data
 			return true
 	return false
