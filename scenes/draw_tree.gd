@@ -278,25 +278,31 @@ func undo_pressed():
 				update_root_display(root_node["root"])
 				
 				#undo collectables
-				for item in root_data[root_node["root"].name]["collection"].keys():
+				var collection_dict = root_data[root_node["root"].name]["collection"]
+				for item in collection_dict.keys():
 					#check for differences
 					var just_added = false
 					if not item in root_node["collection"].keys():
 						just_added = true
 						
-					if item is String and item.contains("water"):
+					if item.has_meta("type") and item.get_meta("type") == "water":
 						if just_added:
 							print("undid")
-							get_node("../Water").set_cell(root_data[root_node["root"].name]["collection"][item], 0, Vector2i(0,0))
-							root_data[root_node["root"].name]["collection"].erase(item)
+							var water_type = 0
+							if item.moving: water_type = 1
+							item.touched = false
+							get_node("../Water").set_cell(collection_dict[item]["position"], water_type, Vector2i(0,0))
+							collection_dict.erase(item)
+						#else:
+							
 					elif item.has_meta("type") and item.get_meta("type") == "flower":
 						if just_added:
-							item.reset_item()
-							root_data[root_node["root"].name]["collection"].erase(item)
+							item.reset_flower()
+							collection_dict.erase(item)
 						else:
 							var old_position = root_node["collection"][item]["position"]
 							item.global_position = Vector2(old_position) 
-							root_data[root_node["root"].name]["collection"][item]["position"] = old_position
+							collection_dict[item]["position"] = old_position
 			
 			for used_position in world_state["tree"]:
 				set_cell(used_position, 0, world_state["tree"][used_position])
@@ -517,10 +523,15 @@ func collect_flower(position_collected, flower_node, branch_position):
 	return false
 	
 var unique_id = 0
-func collect_water(position_collected, root_name):
+func collect_water(position_collected, water_node, root_name):
 	if root_name != null:
 		print("Added")
-		root_data[root_name]["collection"]["water" + str(unique_id)] = position_collected
+		var water_data = {
+			"root" : root_name,
+			"position" : position_collected,
+			"moving" : water_node.moving,
+		}
+		root_data[root_name]["collection"][water_node] = water_data
 		unique_id += 1
 		return true
 	return false
