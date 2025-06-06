@@ -141,28 +141,4 @@ script = ExtResource("12_qs1vn")
 modulate = Color(1, 1, 1, 0.247059)
 texture = ExtResource("5_qcd3b")
 
-[node name="Audio" type="Node2D" parent="."]
-
-[node name="Music" type="AudioStreamPlayer" parent="Audio"]
-stream = ExtResource("12_fyxdr")
-bus = &"Music"
-
-[node name="ClickSoundFX" type="AudioStreamPlayer" parent="Audio"]
-stream = ExtResource("13_fptmo")
-max_polyphony = 4
-bus = &"Sound Effects"
-
-[node name="CollectSoundFX" type="AudioStreamPlayer" parent="Audio"]
-stream = ExtResource("14_bakr3")
-max_polyphony = 4
-bus = &"Sound Effects"
-
-[node name="UndoSoundFX" type="AudioStreamPlayer" parent="Audio"]
-stream = ExtResource("15_jqmoj")
-max_polyphony = 4
-bus = &"Sound Effects"
-
-[node name="WinSoundFX" type="AudioStreamPlayer" parent="Audio"]
-stream = ExtResource("16_ni2ok")
-max_polyphony = 4
-bus = &"Sound Effects"
+[node name="Audio" parent="." instance=ExtResource("12_fyxdr")]
