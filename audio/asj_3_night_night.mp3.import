@@ -12,7 +12,7 @@ dest_files=["res://.godot/imported/asj_3_night_night.mp3-32ae0159babd8fe91c9e704
 
 [params]
 
-loop=false
+loop=true
 loop_offset=0
 bpm=0
 beat_count=0

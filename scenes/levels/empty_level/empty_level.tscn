@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://fcan2qmg7kro"]
+[gd_scene load_steps=18 format=3 uid="uid://fcan2qmg7kro"]
 
 [ext_resource type="Script" uid="uid://drt1vkhdoniou" path="res://scenes/level_controller.gd" id="1_13xaf"]
 [ext_resource type="TileSet" uid="uid://b8uvvrh3bpfbw" path="res://scenes/tilesets/mechanic_tileset.tres" id="2_olau5"]
@@ -7,9 +7,10 @@
 [ext_resource type="TileSet" uid="uid://cwoack1ryda05" path="res://scenes/tilesets/collectable_tileset.tres" id="6_1253n"]
 [ext_resource type="Script" uid="uid://u647hsahymkw" path="res://scenes/flower.gd" id="7_rr1bt"]
 [ext_resource type="Texture2D" uid="uid://n050nky0r8ab" path="res://art/water_tile.png" id="8_ulmm3"]
-[ext_resource type="Script" uid="uid://cc3rk8m12wpkx" path="res://scenes/water.gd" id="9_dmjej"]
+[ext_resource type="Script" path="res://scenes/water.gd" id="9_dmjej"]
 [ext_resource type="Texture2D" uid="uid://wgp6bofgdoed" path="res://art/cursor.png" id="10_3wtlg"]
 [ext_resource type="PackedScene" uid="uid://r0r7cvupp33b" path="res://scenes/audio.tscn" id="11_kffer"]
+[ext_resource type="PackedScene" uid="uid://b6237ktkrkxpc" path="res://scenes/gui.tscn" id="11_v3jgk"]
 
 [sub_resource type="TileMapPattern" id="TileMapPattern_paw1w"]
 tile_data = PackedInt32Array(0, 65536, 0, 65536, 65536, 0, 131072, 65536, 0, 1, 65536, 0, 65537, 65536, 0, 131073, 65536, 0, 2, 65536, 0, 65538, 65536, 0, 131074, 65536, 0)
@@ -85,3 +86,5 @@ modulate = Color(1, 1, 1, 0.247059)
 texture = ExtResource("10_3wtlg")
 
 [node name="Audio" parent="." instance=ExtResource("11_kffer")]
+
+[node name="GUI" parent="." instance=ExtResource("11_v3jgk")]

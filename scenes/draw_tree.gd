@@ -88,6 +88,9 @@ func scan_for_tree_group(initialize = false):
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
+	if Global.paused:
+		return
+	
 	if undo_pressed():
 		return
 	elif Input.is_action_just_pressed("restart"):

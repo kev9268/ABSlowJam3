@@ -12,7 +12,7 @@ dest_files=["res://.godot/imported/asj_3_plain_plains.mp3-ba8a894d0ec4d2aca81ce7
 
 [params]
 
-loop=false
+loop=true
 loop_offset=0
 bpm=0
 beat_count=0

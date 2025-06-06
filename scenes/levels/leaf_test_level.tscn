@@ -1,12 +1,14 @@
-[gd_scene load_steps=12 format=4 uid="uid://crcgt1bsdc1rh"]
+[gd_scene load_steps=14 format=4 uid="uid://crcgt1bsdc1rh"]
 
 [ext_resource type="Script" uid="uid://drt1vkhdoniou" path="res://scenes/level_controller.gd" id="1_exmgb"]
 [ext_resource type="TileSet" uid="uid://b8uvvrh3bpfbw" path="res://scenes/tilesets/mechanic_tileset.tres" id="2_3xj4i"]
 [ext_resource type="Texture2D" uid="uid://b238p5fhdj702" path="res://art/pixel.png" id="6_2dpaf"]
 [ext_resource type="Script" uid="uid://wids4vrb683j" path="res://scenes/draw_tree.gd" id="7_2017k"]
 [ext_resource type="PackedScene" uid="uid://cd41i8olb8biw" path="res://scenes/root.tscn" id="8_ric01"]
+[ext_resource type="PackedScene" uid="uid://b6237ktkrkxpc" path="res://scenes/gui.tscn" id="9_dow2n"]
 [ext_resource type="TileSet" uid="uid://cwoack1ryda05" path="res://scenes/tilesets/collectable_tileset.tres" id="9_y78lv"]
 [ext_resource type="Script" uid="uid://u647hsahymkw" path="res://scenes/flower.gd" id="10_ibjsq"]
+[ext_resource type="PackedScene" uid="uid://r0r7cvupp33b" path="res://scenes/audio.tscn" id="10_y78lv"]
 [ext_resource type="Texture2D" uid="uid://wgp6bofgdoed" path="res://art/cursor.png" id="11_toh7e"]
 
 [sub_resource type="TileMapPattern" id="TileMapPattern_paw1w"]
@@ -70,3 +72,7 @@ script = ExtResource("10_ibjsq")
 [node name="Cursor" type="Sprite2D" parent="."]
 modulate = Color(1, 1, 1, 0.247059)
 texture = ExtResource("11_toh7e")
+
+[node name="GUI" parent="." instance=ExtResource("9_dow2n")]
+
+[node name="Audio" parent="." instance=ExtResource("10_y78lv")]
