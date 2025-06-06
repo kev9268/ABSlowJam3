@@ -14,6 +14,11 @@
 [ext_resource type="Texture2D" uid="uid://n050nky0r8ab" path="res://art/water_tile.png" id="11_kpk0m"]
 [ext_resource type="PackedScene" uid="uid://r0r7cvupp33b" path="res://scenes/audio.tscn" id="12_fyxdr"]
 [ext_resource type="Script" uid="uid://cc3rk8m12wpkx" path="res://scenes/water.gd" id="12_qs1vn"]
+[ext_resource type="AudioStream" uid="uid://dewd7wmmgnhp7" path="res://audio/asj_3_plain_plains.mp3" id="12_fyxdr"]
+[ext_resource type="AudioStream" uid="uid://pwdq05etwrc6" path="res://audio/mouse_click.wav" id="13_fptmo"]
+[ext_resource type="AudioStream" uid="uid://dwwdimhsxmm67" path="res://audio/collect.wav" id="14_bakr3"]
+[ext_resource type="AudioStream" uid="uid://bvyd8weiout3p" path="res://audio/undo.wav" id="15_jqmoj"]
+[ext_resource type="AudioStream" uid="uid://bdqfv5igw3qks" path="res://audio/clear.wav" id="16_ni2ok"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dw7u0"]
 texture = ExtResource("4_7gix3")
@@ -136,4 +141,28 @@ script = ExtResource("12_qs1vn")
 modulate = Color(1, 1, 1, 0.247059)
 texture = ExtResource("5_qcd3b")
 
-[node name="Audio" parent="." instance=ExtResource("12_fyxdr")]
+[node name="Audio" type="Node2D" parent="."]
+
+[node name="Music" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("12_fyxdr")
+bus = &"Music"
+
+[node name="ClickSoundFX" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("13_fptmo")
+max_polyphony = 4
+bus = &"Sound Effects"
+
+[node name="CollectSoundFX" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("14_bakr3")
+max_polyphony = 4
+bus = &"Sound Effects"
+
+[node name="UndoSoundFX" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("15_jqmoj")
+max_polyphony = 4
+bus = &"Sound Effects"
+
+[node name="WinSoundFX" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("16_ni2ok")
+max_polyphony = 4
+bus = &"Sound Effects"
