@@ -1,0 +1,47 @@
+[gd_resource type="TileSet" load_steps=13 format=3 uid="uid://cwoack1ryda05"]
+
+[ext_resource type="Texture2D" uid="uid://db5gposifuxyu" path="res://art/tiny_leaf.png" id="1_81vhi"]
+[ext_resource type="Texture2D" uid="uid://diotonfycqaen" path="res://art/flower_bud.png" id="2_bgayo"]
+[ext_resource type="Texture2D" uid="uid://cflajugb1tvun" path="res://art/apple_tile.png" id="3_aovuw"]
+[ext_resource type="Texture2D" uid="uid://c2bqdh3t4andp" path="res://art/orange_tile.png" id="4_hs16w"]
+[ext_resource type="Texture2D" uid="uid://bmwwitaffwktn" path="res://art/cherry_tile.png" id="5_lsov8"]
+[ext_resource type="Texture2D" uid="uid://cjhfhuwojl1bp" path="res://art/lemon_tile.png" id="6_5iqox"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_widi5"]
+texture = ExtResource("1_81vhi")
+texture_region_size = Vector2i(1, 1)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7gix3"]
+texture = ExtResource("2_bgayo")
+texture_region_size = Vector2i(1, 1)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_itim0"]
+texture = ExtResource("3_aovuw")
+texture_region_size = Vector2i(1, 1)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_pry3o"]
+texture = ExtResource("4_hs16w")
+texture_region_size = Vector2i(1, 1)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rewan"]
+texture = ExtResource("5_lsov8")
+texture_region_size = Vector2i(1, 1)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_amo5r"]
+texture = ExtResource("6_5iqox")
+texture_region_size = Vector2i(1, 1)
+0:0/0 = 0
+
+[resource]
+tile_size = Vector2i(1, 1)
+sources/1 = SubResource("TileSetAtlasSource_7gix3")
+sources/0 = SubResource("TileSetAtlasSource_widi5")
+sources/2 = SubResource("TileSetAtlasSource_itim0")
+sources/3 = SubResource("TileSetAtlasSource_pry3o")
+sources/4 = SubResource("TileSetAtlasSource_rewan")
+sources/5 = SubResource("TileSetAtlasSource_amo5r")

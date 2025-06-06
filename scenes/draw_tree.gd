@@ -50,7 +50,12 @@ var direction_to_vector = {
 	"northwest":Vector2i(-1,-1),
 	"none":Vector2i(0,0),
 }
-
+var fruit_to_tree = {
+	"apple": Vector2i(0,0),
+	"orange": Vector2i(0,1),
+	"lemon": Vector2i(1,0),
+	"cherry": Vector2i(1,1),
+}
 
 var root_data = {}
 var history_collected = {}
@@ -268,7 +273,7 @@ func undo_pressed():
 						
 					if item.has_meta("type") and item.get_meta("type") == "flower":
 						if just_added:
-							item.reset_flower()
+							item.reset_item()
 							root_data[root_node["root"].name]["collection"].erase(item)
 						else:
 							var old_position = root_node["collection"][item]["position"]
@@ -420,11 +425,19 @@ func check_adj_is_same(tree_color, current_position):
 	return true
 	
 func search_for_root(target_position):
+	var root_list = []
 	for root_name in root_data.keys():
 		var root_group = root_data[root_name]["tree_group"]
 		if(target_position in root_group):
-			return root_name
-	return null
+			if get_branch_count(root_name) > 0:
+				root_list.append(root_name)
+	var closest_root = null
+	for root_name in root_list:
+		if closest_root == null:
+			closest_root = root_name
+		elif root_data[root_name]["node"].global_position.distance_squared_to(target_position) < root_data[closest_root]["node"].global_position.distance_squared_to(target_position):
+			closest_root = root_name
+	return closest_root
 	
 func update_root_display(found_root):
 	found_root.update_text()
@@ -457,7 +470,8 @@ func collect_flower(position_collected, flower_node, branch_position):
 	for adj_position in surround_eight:
 		if position_collected+adj_position in current_stroke_pixels:
 			root_name = current_root
-			end_click()
+			if flower_node.collectable_type != "leaf":
+				end_click()
 			break
 	if(root_name == null):
 		if(recent_pushed_root != null):
@@ -471,6 +485,15 @@ func collect_flower(position_collected, flower_node, branch_position):
 	}
 	#items_collected[flower_node] = flower_data
 	if root_name != null:
-		root_data[root_name]["collection"][flower_node] = flower_data
-		return true
+		var valid = false
+		if fruit_to_tree.has(flower_node.collectable_type):
+			if fruit_to_tree[flower_node.collectable_type] == root_data[root_name]["tree_color"]:
+				valid = true
+		else:
+			valid = true
+		
+				
+		if valid:
+			root_data[root_name]["collection"][flower_node] = flower_data
+			return true
 	return false
