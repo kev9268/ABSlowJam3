@@ -14,17 +14,16 @@ func _process(delta: float) -> void:
 	waters = water_tileset.get_used_cells() #water not moving (yet), better to put here
 	#var i = 0
 	for water in waters:
-		#for adj_position in surround_eight:
-		#	var check_cell = tree_tileset.get_cell_source_id(adj_position+water)
-		#	if(check_cell == tree_tileset.data_types["root"]):
-		#var root_node = tree_tileset.find_root_near_mouse(water) #this function did everything above in the comments, but only updates on mouse released
-		var root_node = tree_tileset.find_root_in_current_stroke(water) #this function is similar to the mouse one but works during the mouse draw
-		print(root_node)
-		if (root_node!=null):
-			tree_tileset.add_branch_count(root_node,1) 
-			tree_tileset.collect_water(water, root_node)
-			print(water_tileset)
-			water_tileset.set_cell(water, -1)
-			break
+		for adj_position in surround_eight:
+			var check_cell = tree_tileset.get_cell_source_id(adj_position+water)
+			if(check_cell == tree_tileset.data_types["root"]):
+				var root_node = tree_tileset.find_root_in_current_stroke(water) #this function is similar to the mouse one but works during the mouse draw
+				print(root_node)
+				if (root_node!=null):
+					tree_tileset.add_branch_count(root_node,1) 
+					tree_tileset.collect_water(water, root_node)
+					print(water_tileset)
+					water_tileset.set_cell(water, -1)
+					break
 				
 		#i+=1

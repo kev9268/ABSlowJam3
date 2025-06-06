@@ -134,7 +134,8 @@ func find_root_in_current_stroke(current_position):
 			break
 	if(root_name == null):
 		if(recent_pushed_root != null):
-			root_name = recent_pushed_root
+			#if current_position in root_data[recent_pushed_root]["tree_group"]:
+				root_name = recent_pushed_root
 			
 	return root_name
 
@@ -367,8 +368,9 @@ func move_attachments(roots, offset):
 	for root in roots:
 		root_data[root]["node"].global_position += Vector2(offset)
 		for collection in root_data[root]["collection"].keys():
-			collection.global_position += Vector2(offset)
-			root_data[root]["collection"][collection]["position"] += local_to_map(offset)
+			if not (collection is String):
+				collection.global_position += Vector2(offset)
+				root_data[root]["collection"][collection]["position"] += local_to_map(offset)
 		
 var octants = [PI/8, (3*PI)/8, (5*PI)/8, (7*PI)/8]
 func calculate_mouse_direction():
