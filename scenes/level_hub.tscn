@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cd0yydf3e153h"]
 
 [ext_resource type="Script" uid="uid://daefnn170chbq" path="res://scenes/level_hub.gd" id="1_o1g7o"]
-[ext_resource type="AudioStream" uid="uid://dewd7wmmgnhp7" path="res://audio/asj_3_plain_plains.mp3" id="2_472xg"]
+[ext_resource type="PackedScene" uid="uid://b6237ktkrkxpc" path="res://scenes/gui.tscn" id="2_472xg"]
 
 [node name="LevelHub" type="Node2D"]
 script = ExtResource("1_o1g7o")
@@ -22,9 +22,7 @@ offset_bottom = 107.0
 theme_override_font_sizes/font_size = 8
 text = "template level"
 
-[node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("2_472xg")
-autoplay = true
+[node name="GUI" parent="." instance=ExtResource("2_472xg")]
 
 [connection signal="button_up" from="Button" to="." method="change_level" binds= [0]]
 [connection signal="button_up" from="Button2" to="." method="change_level" binds= [1]]

@@ -1,7 +1,9 @@
+class_name Level_Controller
 extends Node2D
 
 var cursor : Sprite2D
 @export var level_folder : String = ""
+@export var music_type : int 
 var screen_dimensions = Vector2i(240,135)
 var pixel_to_data = {
 	Color.hex(0x411c03ff) : "apple_tree",
@@ -32,7 +34,6 @@ var pixel_to_data = {
 	
 	Color.hex(0x000000ff) : "dark",
 	
-	#Color.hex(0x00000000) : "nothing",
 }
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -44,10 +45,12 @@ func _ready() -> void:
 		$Background.texture = background
 		load_level(tile_data)
 	start_level()
+	
 func start_level():
 	$Layers/Tree.initialize()
 	$Layers/Collectable.initialize()
 	$Layers/Water.initialize()
+	$Audio.play_music(music_type)
 			
 func load_level(image):
 	var data = image.get_image()
@@ -101,16 +104,15 @@ func load_level(image):
 					water_layer.set_cell(Vector2i(x,y), 1, Vector2i(0,0))
 				elif tile == "dark":
 					mech_layer.set_cell(Vector2i(x,y), 1, Vector2i(0,0))
-			
-	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	if Global.paused:
+		return
 	cursor_follow()
 
 func cursor_follow():
 	cursor.global_position = get_local_mouse_position()
-
 
 func play_sound(sound_name : String):
 	$Audio.play_sound(sound_name)

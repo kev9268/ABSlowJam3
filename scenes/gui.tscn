@@ -1,0 +1,92 @@
+[gd_scene load_steps=11 format=3 uid="uid://b6237ktkrkxpc"]
+
+[ext_resource type="Script" uid="uid://da5sosjvewlpc" path="res://scenes/gui.gd" id="1_xki8e"]
+[ext_resource type="Texture2D" uid="uid://bilov7m8pwr4t" path="res://art/ui/play_icon.png" id="2_v3be1"]
+[ext_resource type="Texture2D" uid="uid://bm3em847p66eb" path="res://art/ui/play_icon_hover.png" id="3_xqxrh"]
+[ext_resource type="Texture2D" uid="uid://cia40f7ubxxpr" path="res://art/ui/setting_icon.png" id="4_qupqx"]
+[ext_resource type="Texture2D" uid="uid://b5yn1f4uvatqf" path="res://art/ui/setting_icon_hover.png" id="5_jw8q3"]
+[ext_resource type="Texture2D" uid="uid://ckrtdawebo6i5" path="res://art/ui/restart_icon.png" id="6_bglms"]
+[ext_resource type="Texture2D" uid="uid://cdcdxteq3csw5" path="res://art/ui/restart_icon_hover.png" id="7_qsswy"]
+[ext_resource type="Texture2D" uid="uid://ttejxkwaardn" path="res://art/ui/quit_icon.png" id="8_rvbyd"]
+[ext_resource type="Texture2D" uid="uid://b74bpw5pv0p84" path="res://art/ui/quit_icon_hover.png" id="9_wpw45"]
+[ext_resource type="PackedScene" uid="uid://bbppmt810msmj" path="res://scenes/setting_screen.tscn" id="10_1mbii"]
+
+[node name="GUI" type="CanvasLayer"]
+process_mode = 3
+script = ExtResource("1_xki8e")
+
+[node name="TitleScreen" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+
+[node name="PlayButton" type="TextureButton" parent="TitleScreen"]
+layout_mode = 0
+offset_left = 144.0
+offset_top = 80.0
+offset_right = 176.0
+offset_bottom = 112.0
+texture_normal = ExtResource("2_v3be1")
+texture_hover = ExtResource("3_xqxrh")
+
+[node name="SettingButtion" type="TextureButton" parent="TitleScreen"]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 80.0
+offset_right = 96.0
+offset_bottom = 112.0
+texture_normal = ExtResource("4_qupqx")
+texture_hover = ExtResource("5_jw8q3")
+
+[node name="PauseMenu" type="Panel" parent="."]
+visible = false
+offset_right = 240.0
+offset_bottom = 135.0
+
+[node name="PlayButton" type="TextureButton" parent="PauseMenu"]
+layout_mode = 0
+offset_left = 104.0
+offset_top = 27.0
+offset_right = 136.0
+offset_bottom = 59.0
+texture_normal = ExtResource("2_v3be1")
+texture_hover = ExtResource("3_xqxrh")
+
+[node name="SettingButton" type="TextureButton" parent="PauseMenu"]
+layout_mode = 0
+offset_left = 104.0
+offset_top = 65.0
+offset_right = 136.0
+offset_bottom = 97.0
+texture_normal = ExtResource("4_qupqx")
+texture_hover = ExtResource("5_jw8q3")
+
+[node name="RestartButton" type="TextureButton" parent="PauseMenu"]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 65.0
+offset_right = 96.0
+offset_bottom = 97.0
+texture_normal = ExtResource("6_bglms")
+texture_hover = ExtResource("7_qsswy")
+
+[node name="QuitButton" type="TextureButton" parent="PauseMenu"]
+layout_mode = 0
+offset_left = 144.0
+offset_top = 65.0
+offset_right = 176.0
+offset_bottom = 97.0
+texture_normal = ExtResource("8_rvbyd")
+texture_hover = ExtResource("9_wpw45")
+
+[node name="SettingScreen" parent="." instance=ExtResource("10_1mbii")]
+
+[connection signal="pressed" from="TitleScreen/PlayButton" to="." method="switch_scene" binds= ["hub"]]
+[connection signal="pressed" from="TitleScreen/SettingButtion" to="." method="toggle_setting_screen"]
+[connection signal="pressed" from="PauseMenu/PlayButton" to="." method="close_pause_menu"]
+[connection signal="pressed" from="PauseMenu/SettingButton" to="." method="toggle_setting_screen"]
+[connection signal="pressed" from="PauseMenu/RestartButton" to="." method="restart_scene"]
+[connection signal="pressed" from="PauseMenu/QuitButton" to="." method="return_level"]
