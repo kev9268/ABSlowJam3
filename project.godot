@@ -21,6 +21,10 @@ window/size/viewport_width=240
 window/size/viewport_height=135
 window/stretch/mode="viewport"
 
+[gui]
+
+common/snap_controls_to_pixels=false
+
 [input]
 
 draw={

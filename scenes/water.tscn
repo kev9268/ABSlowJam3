@@ -1,7 +1,65 @@
-[gd_scene load_steps=2 format=3 uid="uid://7xyc5h1gdpen"]
+[gd_scene load_steps=10 format=3 uid="uid://7xyc5h1gdpen"]
 
 [ext_resource type="Script" uid="uid://cicqihk0vxmld" path="res://scenes/water_node.gd" id="1_bdk6y"]
+[ext_resource type="Texture2D" uid="uid://w1ckho2c4b5v" path="res://art/water-Sheet.png" id="1_s3811"]
 
-[node name="Water" type="Node2D"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_ewrsg"]
+atlas = ExtResource("1_s3811")
+region = Rect2(5, 0, 5, 5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fiwy5"]
+atlas = ExtResource("1_s3811")
+region = Rect2(10, 0, 5, 5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xgdjl"]
+atlas = ExtResource("1_s3811")
+region = Rect2(15, 0, 5, 5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5exq1"]
+atlas = ExtResource("1_s3811")
+region = Rect2(20, 0, 5, 5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4pb3l"]
+atlas = ExtResource("1_s3811")
+region = Rect2(25, 0, 5, 5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s3811"]
+atlas = ExtResource("1_s3811")
+region = Rect2(0, 0, 5, 5)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_htah3"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ewrsg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fiwy5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xgdjl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5exq1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4pb3l")
+}],
+"loop": false,
+"name": &"default",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s3811")
+}],
+"loop": true,
+"name": &"fall",
+"speed": 5.0
+}]
+
+[node name="Water" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_htah3")
+offset = Vector2(0.5, 0.5)
 script = ExtResource("1_bdk6y")
 metadata/type = "water"

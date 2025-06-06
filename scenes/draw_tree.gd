@@ -1,6 +1,5 @@
 extends TileMapLayer
 
-var tree_children
 var current_root = null
 var recent_pushed_root = null
 var draw_flag = true
@@ -62,11 +61,11 @@ var history_collected = {}
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	tree_children = get_children()
-	scan_for_tree_group(true)
 	mechanic_layer = get_node("../Mechanics")
 	#draw_branch_line(Vector2(5,106), Vector2(63,123))
 
+func initialize():
+	scan_for_tree_group(true)
 
 func scan_for_tree_group(initialize = false):
 	for root_node : Sprite2D in get_node("RootData").get_children():
@@ -290,14 +289,14 @@ func undo_pressed():
 						if just_added:
 							var water_type = 0
 							if item.moving: water_type = 1
-							item.touched = false
+							item.reset_item()
 							get_node("../Water").set_cell(collection_dict[item]["position"], water_type, Vector2i(0,0))
 							collection_dict.erase(item)
 						#else:
 							
 					elif item.has_meta("type") and item.get_meta("type") == "flower":
 						if just_added:
-							item.reset_flower()
+							item.reset_item()
 							collection_dict.erase(item)
 						else:
 							var old_position = root_node["collection"][item]["position"]
@@ -327,12 +326,13 @@ func make_branch(new_position):
 				if not check_collision_type(new_coords):
 					break
 			else:
-				add_draw_count(current_root, -1)
-				update_root_display(root_data[current_root]["node"])
-				
-				set_cell(new_coords, 0, root_data[current_root]["tree_color"])
-				
-				current_stroke_pixels.append(new_coords)
+				if get_draw_count(current_root) > 0:
+					add_draw_count(current_root, -1)
+					update_root_display(root_data[current_root]["node"])
+					
+					set_cell(new_coords, 0, root_data[current_root]["tree_color"])
+					
+					current_stroke_pixels.append(new_coords)
 			
 	first_click = false
 		
@@ -523,7 +523,7 @@ func collect_flower(position_collected, flower_node, branch_position):
 			return true
 	return false
 	
-var unique_id = 0
+
 func collect_water(position_collected, water_node, root_name):
 	if root_name != null:
 		#print("Added")
@@ -533,6 +533,6 @@ func collect_water(position_collected, water_node, root_name):
 			"moving" : water_node.moving,
 		}
 		root_data[root_name]["collection"][water_node] = water_data
-		unique_id += 1
+		get_parent().get_parent().play_sound("water")
 		return true
 	return false

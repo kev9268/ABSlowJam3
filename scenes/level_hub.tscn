@@ -14,8 +14,17 @@ offset_bottom = 108.0
 theme_override_font_sizes/font_size = 8
 text = "test level"
 
+[node name="Button2" type="Button" parent="."]
+offset_left = 26.0
+offset_top = 76.0
+offset_right = 104.0
+offset_bottom = 107.0
+theme_override_font_sizes/font_size = 8
+text = "template level"
+
 [node name="Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_472xg")
 autoplay = true
 
 [connection signal="button_up" from="Button" to="." method="change_level" binds= [0]]
+[connection signal="button_up" from="Button2" to="." method="change_level" binds= [1]]

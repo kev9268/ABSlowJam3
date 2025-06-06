@@ -7,10 +7,16 @@ var waters = null
 var water_scene : PackedScene = load("res://scenes/water.tscn")
 var moving_waters = []
 var all_water_nodes = []
+var screen_edge = 135
+var screen_top = -3
+var current_time = 0
 
 func _ready() -> void:
 	tree_tileset = get_node("../Tree")
 	water_tileset = get_node("../Water")
+	
+		
+func initialize():
 	waters = water_tileset.get_used_cells()
 	
 	#initializaing moving waters
@@ -32,14 +38,18 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	waters = water_tileset.get_used_cells() #water not moving (yet), better to put here
 	
-	#Move cell of moving water
-	for droplet in moving_waters:
-		if (not droplet.touched):
-			water_tileset.set_cell(droplet.current_position,-1)
-			if (abs(abs(droplet.original_position.y)-abs(droplet.current_position.y))>droplet.distance):
-				droplet.current_position = droplet.original_position
-			droplet.current_position = droplet.current_position+Vector2i(0,1) 
-			water_tileset.set_cell(droplet.current_position,1,Vector2(0,0))
+	if current_time > 0.05: #make sure that water doesn't change speed based on framerate
+		current_time = 0
+		#Move cell of moving water
+		for droplet in moving_waters:
+			if (not droplet.touched):
+				water_tileset.set_cell(droplet.current_position,-1)
+				if (abs(abs(droplet.original_position.y)-abs(droplet.current_position.y))> screen_edge):
+					droplet.current_position.y = screen_top
+				droplet.current_position = droplet.current_position+Vector2i(0,1) 
+				water_tileset.set_cell(droplet.current_position,1,Vector2(0,0))
+				droplet.global_position = droplet.current_position
+	current_time += delta
 		
 	for water_node in all_water_nodes:
 		var water_position = water_node.current_position
@@ -52,13 +62,13 @@ func _process(delta: float) -> void:
 				if (root_node == null):
 					root_node = tree_tileset.find_root_near_mouse(water_position) #find on non draw
 
-				print(root_node)
+				#print(root_node)
 				if (root_node!=null):
-
-					water_node.touched = true
+					water_node.collect_item()
+					#water_node.touched = true
 					tree_tileset.add_branch_count(root_node,1) 
 					tree_tileset.collect_water(water_position, water_node, root_node)
-					print(water_tileset)
+					#print(water_tileset)
 					water_tileset.set_cell(water_position, -1)
 					break
 				

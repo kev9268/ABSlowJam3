@@ -16,6 +16,7 @@ texture_region_size = Vector2i(1, 1)
 texture = ExtResource("2_hvylm")
 texture_region_size = Vector2i(1, 1)
 0:0/0 = 0
+0:0/0/modulate = Color(0, 0, 0, 0)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kpk0m"]
 texture = ExtResource("3_nf2on")
@@ -27,6 +28,7 @@ texture_region_size = Vector2i(1, 1)
 texture = ExtResource("4_a501j")
 texture_region_size = Vector2i(1, 1)
 0:0/0 = 0
+1:0/0 = 0
 
 [resource]
 tile_size = Vector2i(1, 1)

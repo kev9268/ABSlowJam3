@@ -1,0 +1,23 @@
+[gd_resource type="TileSet" load_steps=4 format=3 uid="uid://dwt5nhjq3et6m"]
+
+[ext_resource type="Texture2D" uid="uid://n050nky0r8ab" path="res://art/water_tile.png" id="1_ltpl2"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6b5ql"]
+resource_name = "water"
+texture = ExtResource("1_ltpl2")
+texture_region_size = Vector2i(1, 1)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ufifc"]
+resource_name = "moving_water"
+texture = ExtResource("1_ltpl2")
+texture_region_size = Vector2i(1, 1)
+0:0/0 = 0
+0:0/0/custom_data_0 = true
+
+[resource]
+tile_size = Vector2i(1, 1)
+custom_data_layer_0/name = "Move"
+custom_data_layer_0/type = 1
+sources/0 = SubResource("TileSetAtlasSource_6b5ql")
+sources/1 = SubResource("TileSetAtlasSource_ufifc")
