@@ -16,11 +16,11 @@ func cursor_follow():
 
 func play_sound(sound_name : String):
 	if sound_name == "click":
-		$ClickSoundFX.play()
+		$Audio/ClickSoundFX.play()
 	elif sound_name == "undo":
-		$CollectSoundFX.play()
+		$Audio/UndoSoundFX.play()
 	elif sound_name == "collect":
-		$UndoSoundFX.play()
+		$Audio/CollectSoundFX.play()
 	elif sound_name == "win":
-		$WinSoundFX.play()
+		$Audio/WinSoundFX.play()
 	

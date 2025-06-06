@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=4 uid="uid://bevx43r3iepfw"]
+[gd_scene load_steps=23 format=4 uid="uid://bevx43r3iepfw"]
 
 [ext_resource type="Texture2D" uid="uid://b238p5fhdj702" path="res://art/pixel.png" id="1_2venv"]
 [ext_resource type="Script" uid="uid://drt1vkhdoniou" path="res://scenes/level_controller.gd" id="1_tmr53"]
@@ -18,6 +18,7 @@
 [ext_resource type="AudioStream" uid="uid://dwwdimhsxmm67" path="res://audio/collect.wav" id="14_bakr3"]
 [ext_resource type="AudioStream" uid="uid://bvyd8weiout3p" path="res://audio/undo.wav" id="15_jqmoj"]
 [ext_resource type="AudioStream" uid="uid://bdqfv5igw3qks" path="res://audio/clear.wav" id="16_ni2ok"]
+[ext_resource type="PackedScene" uid="uid://r0r7cvupp33b" path="res://scenes/audio.tscn" id="12_fyxdr"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dw7u0"]
 texture = ExtResource("4_7gix3")
@@ -140,28 +141,4 @@ script = ExtResource("12_qs1vn")
 modulate = Color(1, 1, 1, 0.247059)
 texture = ExtResource("5_qcd3b")
 
-[node name="Audio" type="Node2D" parent="."]
-
-[node name="Music" type="AudioStreamPlayer" parent="Audio"]
-stream = ExtResource("12_fyxdr")
-bus = &"Music"
-
-[node name="ClickSoundFX" type="AudioStreamPlayer" parent="Audio"]
-stream = ExtResource("13_fptmo")
-max_polyphony = 4
-bus = &"Sound Effects"
-
-[node name="CollectSoundFX" type="AudioStreamPlayer" parent="Audio"]
-stream = ExtResource("14_bakr3")
-max_polyphony = 4
-bus = &"Sound Effects"
-
-[node name="UndoSoundFX" type="AudioStreamPlayer" parent="Audio"]
-stream = ExtResource("15_jqmoj")
-max_polyphony = 4
-bus = &"Sound Effects"
-
-[node name="WinSoundFX" type="AudioStreamPlayer" parent="Audio"]
-stream = ExtResource("16_ni2ok")
-max_polyphony = 4
-bus = &"Sound Effects"
+[node name="Audio" parent="." instance=ExtResource("12_fyxdr")]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://6qmobrmptkgg"]
+[gd_scene load_steps=6 format=3 uid="uid://r0r7cvupp33b"]
 
 [ext_resource type="AudioStream" uid="uid://dewd7wmmgnhp7" path="res://audio/asj_3_plain_plains.mp3" id="1_wdljl"]
 [ext_resource type="AudioStream" uid="uid://pwdq05etwrc6" path="res://audio/mouse_click.wav" id="2_dl6it"]
