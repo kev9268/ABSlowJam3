@@ -125,6 +125,19 @@ func find_root_near_mouse(mouse_pos):
 			if(found_root != null):
 				return found_root
 	return null
+	
+func find_root_in_current_stroke(current_position):
+	var root_name = null
+	for stroke_pixel in current_stroke_pixels:
+		if current_position == stroke_pixel:
+			root_name = current_root
+			break
+	if(root_name == null):
+		if(recent_pushed_root != null):
+			#if current_position in root_data[recent_pushed_root]["tree_group"]:
+				root_name = recent_pushed_root
+			
+	return root_name
 
 func mouse_highlight(active):
 	if active:
@@ -265,20 +278,30 @@ func undo_pressed():
 				update_root_display(root_node["root"])
 				
 				#undo collectables
-				for item in root_data[root_node["root"].name]["collection"].keys():
+				var collection_dict = root_data[root_node["root"].name]["collection"]
+				for item in collection_dict.keys():
 					#check for differences
 					var just_added = false
 					if not item in root_node["collection"].keys():
 						just_added = true
 						
-					if item.has_meta("type") and item.get_meta("type") == "flower":
+					if item.has_meta("type") and item.get_meta("type") == "water":
 						if just_added:
-							item.reset_item()
-							root_data[root_node["root"].name]["collection"].erase(item)
+							var water_type = 0
+							if item.moving: water_type = 1
+							item.touched = false
+							get_node("../Water").set_cell(collection_dict[item]["position"], water_type, Vector2i(0,0))
+							collection_dict.erase(item)
+						#else:
+							
+					elif item.has_meta("type") and item.get_meta("type") == "flower":
+						if just_added:
+							item.reset_flower()
+							collection_dict.erase(item)
 						else:
 							var old_position = root_node["collection"][item]["position"]
 							item.global_position = Vector2(old_position) 
-							root_data[root_node["root"].name]["collection"][item]["position"] = old_position
+							collection_dict[item]["position"] = old_position
 			
 			for used_position in world_state["tree"]:
 				set_cell(used_position, 0, world_state["tree"][used_position])
@@ -350,8 +373,9 @@ func move_attachments(roots, offset):
 	for root in roots:
 		root_data[root]["node"].global_position += Vector2(offset)
 		for collection in root_data[root]["collection"].keys():
-			collection.global_position += Vector2(offset)
-			root_data[root]["collection"][collection]["position"] += local_to_map(offset)
+			if not (collection.get_meta("type") == "water"):
+				collection.global_position += Vector2(offset)
+				root_data[root]["collection"][collection]["position"] += local_to_map(offset)
 		
 var octants = [PI/8, (3*PI)/8, (5*PI)/8, (7*PI)/8]
 func calculate_mouse_direction():
@@ -465,7 +489,6 @@ func set_draw_count(root_name, value):
 	update_root_display(root_data[root_name]["node"])
 	
 func collect_flower(position_collected, flower_node, branch_position):
-	current_stroke_pixels
 	var root_name = null
 	for adj_position in surround_eight:
 		if position_collected+adj_position in current_stroke_pixels:
@@ -496,4 +519,18 @@ func collect_flower(position_collected, flower_node, branch_position):
 		if valid:
 			root_data[root_name]["collection"][flower_node] = flower_data
 			return true
+	return false
+	
+var unique_id = 0
+func collect_water(position_collected, water_node, root_name):
+	if root_name != null:
+		#print("Added")
+		var water_data = {
+			"root" : root_name,
+			"position" : position_collected,
+			"moving" : water_node.moving,
+		}
+		root_data[root_name]["collection"][water_node] = water_data
+		unique_id += 1
+		return true
 	return false
