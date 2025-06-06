@@ -80,12 +80,9 @@ resource_name = "moving_water"
 texture = ExtResource("11_kpk0m")
 texture_region_size = Vector2i(1, 1)
 0:0/0 = 0
-0:0/0/custom_data_0 = true
 
 [sub_resource type="TileSet" id="TileSet_fptmo"]
 tile_size = Vector2i(1, 1)
-custom_data_layer_0/name = "Move"
-custom_data_layer_0/type = 1
 sources/0 = SubResource("TileSetAtlasSource_13hs1")
 sources/1 = SubResource("TileSetAtlasSource_fptmo")
 
@@ -125,11 +122,9 @@ script = ExtResource("2_88ety")
 [node name="FlowerData" type="Node2D" parent="Layers/Flower"]
 
 [node name="Water" type="TileMapLayer" parent="Layers"]
-tile_map_data = PackedByteArray("AAAbAAoAAQAAAAAAAAAkACAAAAAAAAAAAAAHACEAAAAAAAAAAAASACQAAAAAAAAAAAA=")
+tile_map_data = PackedByteArray("AAAbAA0AAQAAAAAAAAApACEAAQAAAAAAAAAhACQAAQAAAAAAAAAQACIAAQAAAAAAAAA=")
 tile_set = SubResource("TileSet_fptmo")
 script = ExtResource("12_qs1vn")
-
-[node name="WaterData" type="Node2D" parent="Layers/Water"]
 
 [node name="Cursor" type="Sprite2D" parent="."]
 modulate = Color(1, 1, 1, 0.247059)
