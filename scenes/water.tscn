@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://7xyc5h1gdpen"]
 
-[ext_resource type="Script" uid="uid://cicqihk0vxmld" path="res://scenes/water_node.gd" id="1_bdk6y"]
+[ext_resource type="Script" path="res://scenes/water_node.gd" id="1_bdk6y"]
 [ext_resource type="Texture2D" uid="uid://w1ckho2c4b5v" path="res://art/water-Sheet.png" id="1_s3811"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ewrsg"]

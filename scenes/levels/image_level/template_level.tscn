@@ -8,9 +8,9 @@
 [ext_resource type="TileSet" uid="uid://cwoack1ryda05" path="res://scenes/tilesets/collectable_tileset.tres" id="6_e28s4"]
 [ext_resource type="Script" uid="uid://u647hsahymkw" path="res://scenes/flower.gd" id="7_4fer5"]
 [ext_resource type="Texture2D" uid="uid://n050nky0r8ab" path="res://art/water_tile.png" id="8_3ngcq"]
-[ext_resource type="Texture2D" uid="uid://wgp6bofgdoed" path="res://art/cursor.png" id="8_qn42a"]
 [ext_resource type="PackedScene" uid="uid://r0r7cvupp33b" path="res://scenes/audio.tscn" id="9_1sbr3"]
 [ext_resource type="Script" path="res://scenes/water.gd" id="9_5sfo0"]
+[ext_resource type="PackedScene" uid="uid://25ovpo42vnf7" path="res://scenes/cursor.tscn" id="10_5sfo0"]
 [ext_resource type="PackedScene" uid="uid://b6237ktkrkxpc" path="res://scenes/gui.tscn" id="12_5sfo0"]
 
 [sub_resource type="TileMapPattern" id="TileMapPattern_paw1w"]
@@ -95,9 +95,7 @@ script = ExtResource("9_5sfo0")
 
 [node name="WaterData" type="Node2D" parent="Layers/Water"]
 
-[node name="Cursor" type="Sprite2D" parent="."]
-modulate = Color(1, 1, 1, 0.247059)
-texture = ExtResource("8_qn42a")
+[node name="Cursor" parent="." instance=ExtResource("10_5sfo0")]
 
 [node name="Audio" parent="." instance=ExtResource("9_1sbr3")]
 

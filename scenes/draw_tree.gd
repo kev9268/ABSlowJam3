@@ -102,6 +102,7 @@ func _process(delta: float) -> void:
 	if current_root == null:
 		var found_root = find_root_near_mouse(mouse_pos)
 		if(found_root != null):
+			update_cursor_display(found_root)
 			mouse_highlight(true)
 			if get_branch_count(found_root) > 0:
 				click_first(mouse_pos, found_root)
@@ -142,6 +143,7 @@ func find_root_in_current_stroke(current_position):
 	return root_name
 
 func mouse_highlight(active):
+	
 	if active:
 		get_parent().get_parent().cursor.modulate = Color(1.0,1.0,1.0,0.5)
 	else:
@@ -279,7 +281,7 @@ func undo_pressed():
 				position_difference = root_node["position"] - root_node["root"].global_position
 				root_node["root"].global_position = root_node["position"]
 				update_root_display(root_node["root"])
-				
+				update_cursor_display(root_node["root"].name)
 				#undo collectables
 				var collection_dict = root_data[root_node["root"].name]["collection"]
 				for item in collection_dict.keys():
@@ -333,7 +335,7 @@ func make_branch(new_position):
 				if get_draw_count(current_root) > 0:
 					add_draw_count(current_root, -1)
 					update_root_display(root_data[current_root]["node"])
-					
+					update_cursor_display(current_root)
 					set_cell(new_coords, 0, root_data[current_root]["tree_color"])
 					
 					current_stroke_pixels.append(new_coords)
@@ -383,12 +385,14 @@ func move_attachments(roots, offset):
 				root_data[root]["collection"][collection]["position"] += local_to_map(offset)
 		
 var octants = [PI/8, (3*PI)/8, (5*PI)/8, (7*PI)/8]
-func calculate_mouse_direction():
+func calculate_mouse_direction(convert = false):
 	var mouse_pos = get_local_mouse_position()
 
 	var distance = mouse_pos - previous_mouse_position
 
 	if(distance == Vector2(0,0)):
+		if(convert):
+			return Vector2i.ZERO
 		return "none"
 	var direction = distance.angle()
 	if(direction < octants[0] and direction > -octants[0]):
@@ -407,6 +411,9 @@ func calculate_mouse_direction():
 		direction = "northwest"
 	elif(direction < -octants[3]  or direction > octants[3]):
 		direction = "west"
+		
+	if convert:
+		return direction_to_vector[direction]
 
 	return direction
 	
@@ -467,6 +474,10 @@ func search_for_root(target_position):
 		elif root_data[root_name]["node"].global_position.distance_squared_to(target_position) < root_data[closest_root]["node"].global_position.distance_squared_to(target_position):
 			closest_root = root_name
 	return closest_root
+	
+func update_cursor_display(found_root):
+	get_parent().get_parent().update_cursor_text(root_data[found_root]["node"].draw_count)
+	
 	
 func update_root_display(found_root):
 	found_root.update_text()

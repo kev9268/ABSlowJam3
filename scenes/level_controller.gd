@@ -5,7 +5,8 @@ var cursor : Sprite2D
 @export var level_folder : String = ""
 @export var music_type : int 
 
-var screen_dimensions = Vector2i(240,135)
+var previous_mouse_position = Vector2(0,0)
+var screen_dimensions = Vector2(240,135)
 var pixel_to_data = {
 	Color.hex(0x411c03ff) : "apple_tree",
 	Color.hex(0x553800ff) : "orange_tree",
@@ -36,8 +37,11 @@ var pixel_to_data = {
 	Color.hex(0x000000ff) : "dark",
 	
 }
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+
 	cursor = $Cursor
 	if level_folder != "":
 		var image_path = "res://scenes/levels/" + level_folder
@@ -111,9 +115,25 @@ func _process(delta: float) -> void:
 	if Global.paused:
 		return
 	cursor_follow()
+	
+func update_cursor_text(text):
+	cursor.set_text(text)
 
 func cursor_follow():
-	cursor.global_position = get_local_mouse_position()
+	var mouse_position = get_tree().get_root().get_mouse_position()
+	cursor.global_position = mouse_position
+	var mouse_direction = (mouse_position - previous_mouse_position).normalized()
+	var distance = (mouse_position - previous_mouse_position).length_squared() > 0.2
+	var direction = Vector2(0,0)
+	if distance:
+		if mouse_direction.y < 0:
+			direction = Vector2(0,-1)
+		else:
+			direction = Vector2(0,1)
+	cursor.text_offset(direction)
+	
+	previous_mouse_position = mouse_position
+	
 
 func play_sound(sound_name : String):
 	$Audio.play_sound(sound_name)
