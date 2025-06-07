@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://cd0yydf3e153h"]
+[gd_scene load_steps=4 format=3 uid="uid://cd0yydf3e153h"]
 
 [ext_resource type="Script" uid="uid://daefnn170chbq" path="res://scenes/level_hub.gd" id="1_o1g7o"]
 [ext_resource type="PackedScene" uid="uid://b6237ktkrkxpc" path="res://scenes/gui.tscn" id="2_472xg"]
+[ext_resource type="FontFile" uid="uid://42iydnvi6hbk" path="res://pixelFJ8pt1-Modified.otf" id="3_vrqs0"]
 
 [node name="LevelHub" type="Node2D"]
 script = ExtResource("1_o1g7o")
@@ -24,6 +25,15 @@ theme_override_font_sizes/font_size = 8
 text = "template level"
 
 [node name="GUI" parent="." instance=ExtResource("2_472xg")]
+
+[node name="Button3" type="Button" parent="."]
+offset_left = 36.0
+offset_top = 39.0
+offset_right = 72.0
+offset_bottom = 65.0
+theme_override_fonts/font = ExtResource("3_vrqs0")
+theme_override_font_sizes/font_size = 8
+text = "01"
 
 [connection signal="button_up" from="Button" to="." method="change_level" binds= [0]]
 [connection signal="button_up" from="Button2" to="." method="change_level" binds= [1]]
