@@ -65,3 +65,8 @@ func _on_complete_screen_animation_complete() -> void:
 	Global.player_data["previous_scene"] = Global.player_data["current_scene"]
 	Global.player_data["current_scene"] = "hub"
 	get_tree().change_scene_to_file(scenes["hub"])
+
+
+func _on_dev_mode_pressed() -> void:
+	Global.dev_mode = !Global.dev_mode
+	switch_scene("hub")

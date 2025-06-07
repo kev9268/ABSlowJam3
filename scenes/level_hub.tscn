@@ -1,39 +1,419 @@
-[gd_scene load_steps=4 format=3 uid="uid://cd0yydf3e153h"]
+[gd_scene load_steps=8 format=3 uid="uid://cd0yydf3e153h"]
 
 [ext_resource type="Script" uid="uid://daefnn170chbq" path="res://scenes/level_hub.gd" id="1_o1g7o"]
 [ext_resource type="PackedScene" uid="uid://b6237ktkrkxpc" path="res://scenes/gui.tscn" id="2_472xg"]
-[ext_resource type="FontFile" uid="uid://42iydnvi6hbk" path="res://pixelFJ8pt1-Modified.otf" id="3_vrqs0"]
+[ext_resource type="Texture2D" uid="uid://b6vpjtfk6qmel" path="res://art/hub.png" id="2_7750w"]
+[ext_resource type="PackedScene" uid="uid://cwgb7kkl1qb4" path="res://scenes/level_button.tscn" id="3_vrqs0"]
+[ext_resource type="StyleBox" uid="uid://d2tfhxgo18meg" path="res://scenes/level_tile_incomplete_long.tres" id="4_73tgf"]
+[ext_resource type="Texture2D" uid="uid://b5xhfxfbr2bsh" path="res://art/ui/arrow_up.png" id="6_iwcab"]
+[ext_resource type="Texture2D" uid="uid://cav3vlj032cn5" path="res://art/ui/arrow_down.png" id="7_osdlv"]
 
 [node name="LevelHub" type="Node2D"]
 script = ExtResource("1_o1g7o")
 
-[node name="Button" type="Button" parent="."]
-visible = false
-offset_left = 136.0
-offset_top = 77.0
-offset_right = 214.0
-offset_bottom = 108.0
-theme_override_font_sizes/font_size = 8
-text = "test level"
-
-[node name="Button2" type="Button" parent="."]
-offset_left = 26.0
-offset_top = 76.0
-offset_right = 104.0
-offset_bottom = 107.0
-theme_override_font_sizes/font_size = 8
-text = "template level"
-
 [node name="GUI" parent="." instance=ExtResource("2_472xg")]
 
-[node name="Button3" type="Button" parent="."]
-offset_left = 36.0
-offset_top = 39.0
-offset_right = 72.0
-offset_bottom = 65.0
-theme_override_fonts/font = ExtResource("3_vrqs0")
-theme_override_font_sizes/font_size = 8
-text = "01"
+[node name="ScrollUP" type="TextureButton" parent="GUI"]
+offset_left = 221.0
+offset_right = 240.0
+offset_bottom = 19.0
+texture_normal = ExtResource("6_iwcab")
+texture_pressed = ExtResource("6_iwcab")
+texture_hover = ExtResource("6_iwcab")
 
-[connection signal="button_up" from="Button" to="." method="change_level" binds= [0]]
-[connection signal="button_up" from="Button2" to="." method="change_level" binds= [1]]
+[node name="ScrollDOWN" type="TextureButton" parent="GUI"]
+offset_left = 221.0
+offset_top = 116.0
+offset_right = 240.0
+offset_bottom = 135.0
+texture_normal = ExtResource("7_osdlv")
+texture_pressed = ExtResource("7_osdlv")
+texture_hover = ExtResource("7_osdlv")
+
+[node name="Scene" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Scene"]
+texture = ExtResource("2_7750w")
+centered = false
+
+[node name="World" type="Node2D" parent="Scene"]
+position = Vector2(0.5, 0.5)
+
+[node name="00" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 107.5
+offset_top = 1.5
+offset_right = 126.5
+offset_bottom = 20.5
+level_id = "tutorial"
+unlocks = Array[NodePath]([NodePath("../01")])
+
+[node name="01" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 107.5
+offset_top = 21.5
+offset_right = 126.5
+offset_bottom = 40.5
+text = "01"
+level_id = "flower_objective"
+unlocks = Array[NodePath]([NodePath("../02"), NodePath("../03")])
+
+[node name="02" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 127.5
+offset_top = 21.5
+offset_right = 146.5
+offset_bottom = 40.5
+text = "02"
+level_id = "optimize"
+
+[node name="03" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 107.5
+offset_top = 41.5
+offset_right = 126.5
+offset_bottom = 60.5
+text = "03"
+level_id = "chain"
+unlocks = Array[NodePath]([NodePath("../04"), NodePath("../06")])
+
+[node name="04" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 87.5
+offset_top = 41.5
+offset_right = 106.5
+offset_bottom = 60.5
+text = "04"
+level_id = "leaf_intro"
+unlocks = Array[NodePath]([NodePath("../05")])
+
+[node name="05" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 67.5
+offset_top = 21.5
+offset_right = 86.5
+offset_bottom = 40.5
+text = "05"
+level_id = "leaf_concept"
+
+[node name="06" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 107.5
+offset_top = 61.5
+offset_right = 126.5
+offset_bottom = 80.5
+text = "06"
+level_id = "wall_intro"
+unlocks = Array[NodePath]([NodePath("../07"), NodePath("../10"), NodePath("../13")])
+
+[node name="07" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 127.5
+offset_top = 61.5
+offset_right = 146.5
+offset_bottom = 80.5
+text = "07"
+level_id = "planning_required"
+unlocks = Array[NodePath]([NodePath("../08")])
+
+[node name="08" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 147.5
+offset_top = 61.5
+offset_right = 166.5
+offset_bottom = 80.5
+text = "08"
+level_id = "wall_cheating"
+unlocks = Array[NodePath]([NodePath("../09")])
+
+[node name="09" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 167.5
+offset_top = 41.5
+offset_right = 186.5
+offset_bottom = 60.5
+text = "09"
+level_id = "wall_hugging"
+
+[node name="10" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 87.5
+offset_top = 81.5
+offset_right = 106.5
+offset_bottom = 100.5
+text = "10"
+level_id = "second_tree"
+unlocks = Array[NodePath]([NodePath("../11")])
+
+[node name="11" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 67.5
+offset_top = 81.5
+offset_right = 86.5
+offset_bottom = 100.5
+text = "11"
+level_id = "delegate"
+unlocks = Array[NodePath]([NodePath("../12"), NodePath("../14")])
+
+[node name="12" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 47.5
+offset_top = 81.5
+offset_right = 66.5
+offset_bottom = 100.5
+text = "12"
+level_id = "delegate"
+unlocks = Array[NodePath]([NodePath("../15")])
+
+[node name="13" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 107.5
+offset_top = 81.5
+offset_right = 126.5
+offset_bottom = 100.5
+text = "13"
+level_id = "magic_branch"
+unlocks = Array[NodePath]([NodePath("../11"), NodePath("../14"), NodePath("../25"), NodePath("../21")])
+
+[node name="14" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 67.5
+offset_top = 101.5
+offset_right = 86.5
+offset_bottom = 120.5
+text = "14"
+level_id = "helping_hand"
+unlocks = Array[NodePath]([NodePath("../15")])
+
+[node name="15" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 47.5
+offset_top = 101.5
+offset_right = 66.5
+offset_bottom = 120.5
+text = "15"
+level_id = "position_matters"
+unlocks = Array[NodePath]([NodePath("../16")])
+
+[node name="16" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 27.5
+offset_top = 101.5
+offset_right = 46.5
+offset_bottom = 120.5
+text = "16"
+level_id = "position_matters"
+unlocks = Array[NodePath]([NodePath("../17")])
+
+[node name="17" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 27.5
+offset_top = 81.5
+offset_right = 46.5
+offset_bottom = 100.5
+text = "17"
+level_id = "rooted_tree"
+unlocks = Array[NodePath]([NodePath("../18"), NodePath("../19")])
+
+[node name="18" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 7.5
+offset_top = 81.5
+offset_right = 26.5
+offset_bottom = 100.5
+text = "18"
+level_id = "intertwined"
+
+[node name="19" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 27.5
+offset_top = 61.5
+offset_right = 46.5
+offset_bottom = 80.5
+text = "19"
+level_id = "hug_of_war"
+unlocks = Array[NodePath]([NodePath("../20")])
+
+[node name="20" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 7.5
+offset_top = 41.5
+offset_right = 26.5
+offset_bottom = 60.5
+text = "20"
+level_id = "hug_of_war"
+unlocks = Array[NodePath]([NodePath("../21")])
+
+[node name="21" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 127.5
+offset_top = 81.5
+offset_right = 146.5
+offset_bottom = 100.5
+text = "21"
+level_id = "priority"
+unlocks = Array[NodePath]([NodePath("../22")])
+
+[node name="22" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 147.5
+offset_top = 101.5
+offset_right = 166.5
+offset_bottom = 120.5
+text = "22"
+level_id = "revive"
+unlocks = Array[NodePath]([NodePath("../23")])
+
+[node name="23" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 167.5
+offset_top = 101.5
+offset_right = 186.5
+offset_bottom = 120.5
+text = "23"
+level_id = "sharing"
+unlocks = Array[NodePath]([NodePath("../24")])
+
+[node name="24" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 187.5
+offset_top = 81.5
+offset_right = 206.5
+offset_bottom = 100.5
+text = "24"
+level_id = "elevator"
+
+[node name="25" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 107.5
+offset_top = 101.5
+offset_right = 126.5
+offset_bottom = 120.5
+text = "25"
+level_id = "double_tree"
+unlocks = Array[NodePath]([NodePath("../26"), NodePath("../27"), NodePath("../29")])
+
+[node name="26" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 87.5
+offset_top = 101.5
+offset_right = 106.5
+offset_bottom = 120.5
+text = "26"
+level_id = "bait"
+unlocks = Array[NodePath]([NodePath("../30")])
+
+[node name="27" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 127.5
+offset_top = 101.5
+offset_right = 146.5
+offset_bottom = 120.5
+text = "27"
+level_id = "reserves"
+unlocks = Array[NodePath]([NodePath("../28")])
+
+[node name="28" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 127.5
+offset_top = 121.5
+offset_right = 146.5
+offset_bottom = 140.5
+text = "28"
+level_id = "wasting_branch"
+unlocks = Array[NodePath]([NodePath("../29")])
+
+[node name="29" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 107.5
+offset_top = 121.5
+offset_right = 126.5
+offset_bottom = 140.5
+text = "29"
+level_id = "branch_maze"
+unlocks = Array[NodePath]([NodePath("../30"), NodePath("../32")])
+
+[node name="30" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 87.5
+offset_top = 121.5
+offset_right = 106.5
+offset_bottom = 140.5
+text = "30"
+level_id = "fallen_breathren"
+unlocks = Array[NodePath]([NodePath("../31")])
+
+[node name="31" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 87.5
+offset_top = 141.5
+offset_right = 106.5
+offset_bottom = 160.5
+text = "31"
+level_id = "corpse_minefield"
+unlocks = Array[NodePath]([NodePath("../32"), NodePath("../36")])
+
+[node name="36" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 87.5
+offset_top = 161.5
+offset_right = 106.5
+offset_bottom = 180.5
+text = "36"
+level_id = "crossover"
+unlocks = Array[NodePath]([NodePath("../37"), NodePath("../39")])
+
+[node name="37" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 107.5
+offset_top = 161.5
+offset_right = 126.5
+offset_bottom = 180.5
+text = "37"
+level_id = "trapped"
+unlocks = Array[NodePath]([NodePath("../38"), NodePath("../39")])
+
+[node name="38" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 127.5
+offset_top = 161.5
+offset_right = 146.5
+offset_bottom = 180.5
+text = "38"
+level_id = "thorny_path"
+unlocks = Array[NodePath]([NodePath(".")])
+
+[node name="39" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 87.5
+offset_top = 181.5
+offset_right = 146.5
+offset_bottom = 200.5
+theme_override_styles/hover_pressed = ExtResource("4_73tgf")
+theme_override_styles/hover = ExtResource("4_73tgf")
+theme_override_styles/pressed = ExtResource("4_73tgf")
+theme_override_styles/normal = ExtResource("4_73tgf")
+text = "39"
+level_id = "darkness"
+unlocks = Array[NodePath]([NodePath("../40")])
+
+[node name="40" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 87.5
+offset_top = 201.5
+offset_right = 146.5
+offset_bottom = 220.5
+theme_override_styles/hover_pressed = ExtResource("4_73tgf")
+theme_override_styles/hover = ExtResource("4_73tgf")
+theme_override_styles/pressed = ExtResource("4_73tgf")
+theme_override_styles/normal = ExtResource("4_73tgf")
+text = "40"
+level_id = "end"
+
+[node name="32" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 107.5
+offset_top = 141.5
+offset_right = 126.5
+offset_bottom = 160.5
+text = "32"
+level_id = "burning_desire"
+unlocks = Array[NodePath]([NodePath("../33"), NodePath("../37")])
+
+[node name="33" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 127.5
+offset_top = 141.5
+offset_right = 146.5
+offset_bottom = 160.5
+text = "33"
+level_id = "branch_web"
+unlocks = Array[NodePath]([NodePath("../34"), NodePath("../38")])
+
+[node name="34" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 147.5
+offset_top = 141.5
+offset_right = 166.5
+offset_bottom = 160.5
+text = "34"
+level_id = "crouching"
+unlocks = Array[NodePath]([NodePath("../35")])
+
+[node name="35" parent="Scene/World" instance=ExtResource("3_vrqs0")]
+offset_left = 167.5
+offset_top = 141.5
+offset_right = 186.5
+offset_bottom = 160.5
+text = "35"
+level_id = "frankenstein"
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+limit_top = 0
+limit_bottom = 240
+
+[connection signal="button_down" from="GUI/ScrollUP" to="." method="_on_scroll_up_button_down"]
+[connection signal="button_up" from="GUI/ScrollUP" to="." method="_on_scroll_up_button_up"]
+[connection signal="button_down" from="GUI/ScrollDOWN" to="." method="_on_scroll_down_button_down"]
+[connection signal="button_up" from="GUI/ScrollDOWN" to="." method="_on_scroll_down_button_up"]

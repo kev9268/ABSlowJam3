@@ -57,6 +57,7 @@ var fruit_to_tree = {
 }
 
 var root_data = {}
+var collection_position = {}
 var history_collected = {}
 
 # Called when the node enters the scene tree for the first time.
@@ -82,6 +83,7 @@ func scan_for_tree_group(initialize = false):
 			root_data[root_node.name]["tree_group"] = flood_select(root_position, true)
 			root_data[root_node.name]["tree_color"] = get_cell_atlas_coords(root_position)
 			root_data[root_node.name]["node"] = root_node
+		
 
 
 
@@ -118,13 +120,13 @@ func _process(delta: float) -> void:
 
 	previous_mouse_position = mouse_pos
 
-func find_root_near_mouse(mouse_pos):
+func find_root_near_mouse(mouse_pos, ignore_count = false):
 	var new_position = local_to_map(mouse_pos)
 	for adj_position in surround_21: #check if valid position
 		var adjacent_position = adj_position+new_position
 		var check_cell = get_cell_source_id(adjacent_position)
 		if(check_cell != -1):
-			var found_root = search_for_root(adjacent_position)
+			var found_root = search_for_root(adjacent_position, ignore_count)
 			if(found_root != null):
 				return found_root
 	return null
@@ -240,6 +242,7 @@ func check_limit(new_position):
 	return false
 
 func apply_mechanic():
+	var broken = false
 	for cell in mechanic_layer.get_used_cells_by_id(0): #fire tile
 		set_cell(cell)
 	
@@ -349,13 +352,13 @@ func check_collision_type(collide_position):
 		var flood_info = flood_select(collide_position, false, true)
 		if(flood_info[0].size() > 0):
 			recent_pushed_root = flood_info[0][0]
-		if(move_selected_cells(flood_info[1], push_position)):
-			move_attachments(flood_info[0], push_position)
+		if(move_selected_cells(flood_info[1], push_position, flood_info[0])):
+			#move_attachments(flood_info[0], push_position)
 			return true
 	return false
 		
 		
-func move_selected_cells(list_of_cells, offset):
+func move_selected_cells(list_of_cells, offset, roots):
 
 	var tree_color = get_cell_atlas_coords(list_of_cells[0])
 	var breakable_tiles = []
@@ -368,10 +371,22 @@ func move_selected_cells(list_of_cells, offset):
 		elif(mech_next == mech_types["break"]):
 			breakable_tiles.append(next_position)
 				
+	var collectable_pos = {}
+	for root in roots:
+		root_data[root]["node"].global_position += Vector2(offset)
+		for collection in root_data[root]["collection"].keys():
+			if not (collection.get_meta("type") == "water"):
+				collectable_pos[root_data[root]["collection"][collection]["position"]] = collection
+				
+				
 	for cell in list_of_cells: #clear those old cells
 		set_cell(cell)
+	print(collectable_pos)
 	for cell in list_of_cells:
 		set_cell(cell+offset, 0, tree_color)
+		if cell in collectable_pos.keys():
+			collectable_pos[cell].global_position += Vector2(offset)
+			root_data[roots[0]]["collection"][collectable_pos[cell]]["position"] += local_to_map(offset)
 	for cell in breakable_tiles:
 		mechanic_layer.set_cell(cell)
 	return true
@@ -381,8 +396,9 @@ func move_attachments(roots, offset):
 		root_data[root]["node"].global_position += Vector2(offset)
 		for collection in root_data[root]["collection"].keys():
 			if not (collection.get_meta("type") == "water"):
-				collection.global_position += Vector2(offset)
-				root_data[root]["collection"][collection]["position"] += local_to_map(offset)
+				if root_data[root]["collection"][collection]["attached"]:
+					collection.global_position += Vector2(offset)
+					root_data[root]["collection"][collection]["position"] += local_to_map(offset)
 		
 var octants = [PI/8, (3*PI)/8, (5*PI)/8, (7*PI)/8]
 func calculate_mouse_direction(convert = false):
@@ -460,12 +476,12 @@ func check_adj_is_same(tree_color, current_position):
 			return false
 	return true
 	
-func search_for_root(target_position):
+func search_for_root(target_position, ignore_count = false):
 	var root_list = []
 	for root_name in root_data.keys():
 		var root_group = root_data[root_name]["tree_group"]
 		if(target_position in root_group):
-			if get_branch_count(root_name) > 0:
+			if get_branch_count(root_name) > 0 or ignore_count:
 				root_list.append(root_name)
 	var closest_root = null
 	for root_name in root_list:
@@ -521,6 +537,7 @@ func collect_flower(position_collected, flower_node, branch_position):
 	var flower_data = {
 		"root" : root_name,
 		"position" : position_collected,
+		"attached" : true,
 	}
 	#items_collected[flower_node] = flower_data
 	if root_name != null:
@@ -533,6 +550,10 @@ func collect_flower(position_collected, flower_node, branch_position):
 		
 				
 		if valid:
+			set_cell(position_collected, 0, root_data[root_name]["tree_color"])
+			for adjacent_position in surround_eight:
+				set_cell(position_collected+adjacent_position, 0, root_data[root_name]["tree_color"])
+			
 			get_parent().get_parent().play_sound("collect")
 			root_data[root_name]["collection"][flower_node] = flower_data
 			return true
