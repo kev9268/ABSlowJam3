@@ -14,4 +14,4 @@ func _ready() -> void:
 	update_text()
 
 func update_text():
-	$RichTextLabel.text = "[center]" + str(branch_count) + ":" + str(draw_count)
+	$RichTextLabel.text = "[center]" + str(branch_count)# + ":" + str(draw_count)

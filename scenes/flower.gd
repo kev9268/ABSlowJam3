@@ -40,6 +40,7 @@ func _process(delta: float) -> void:
 			var check_cell = tree_tileset.get_cell_source_id(adj_position+bud)
 			if(check_cell == tile_types["tree"]):
 				var success = tree_tileset.collect_flower(bud, flower_data[bud], check_cell)
+				print(success)
 				if success:
 					flower_data[bud].collect_item()
 					

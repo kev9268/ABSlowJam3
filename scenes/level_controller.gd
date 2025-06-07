@@ -2,10 +2,11 @@ class_name Level_Controller
 extends Node2D
 
 var cursor : Sprite2D
-@export var level_folder : String = ""
+@export var level_folder : String
 @export var music_type : int 
 
-var screen_dimensions = Vector2i(240,135)
+var previous_mouse_position = Vector2(0,0)
+var screen_dimensions = Vector2(240,135)
 var pixel_to_data = {
 	Color.hex(0x411c03ff) : "apple_tree",
 	Color.hex(0x553800ff) : "orange_tree",
@@ -36,15 +37,18 @@ var pixel_to_data = {
 	Color.hex(0x000000ff) : "dark",
 	
 }
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	level_folder = scene_file_path.split("/")[4]
+
 	cursor = $Cursor
-	if level_folder != "":
-		var image_path = "res://scenes/levels/" + level_folder
-		var tile_data = load(image_path + "/tree_data.png")
-		var background = load(image_path + "/background.png") 
-		$Background.texture = background
-		load_level(tile_data)
+	var image_path = "res://scenes/levels/" + level_folder
+	var tile_data = load(image_path + "/tree_data.png")
+	var background = load(image_path + "/background.png") 
+	$Background.texture = background
+	load_level(tile_data)
 	start_level()
 	
 func start_level():
@@ -108,12 +112,29 @@ func load_level(image):
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	change_background_alpha(Global.player_data["background_transparency"])
 	if Global.paused:
 		return
 	cursor_follow()
+	
+func update_cursor_text(text):
+	cursor.set_text(text)
 
 func cursor_follow():
-	cursor.global_position = get_local_mouse_position()
+	var mouse_position = get_tree().get_root().get_mouse_position()
+	cursor.global_position = mouse_position
+	var mouse_direction = (mouse_position - previous_mouse_position).normalized()
+	var distance = (mouse_position - previous_mouse_position).length_squared() > 0.2
+	var direction = Vector2(0,0)
+	if distance:
+		if mouse_direction.y < 0:
+			direction = Vector2(0,-1)
+		else:
+			direction = Vector2(0,1)
+	cursor.text_offset(direction)
+	
+	previous_mouse_position = mouse_position
+	
 
 func play_sound(sound_name : String):
 	$Audio.play_sound(sound_name)
@@ -124,3 +145,6 @@ func complete_level():
 	Global.just_completed = true
 	$Audio.play_sound("win")
 	$GUI.finish_level()
+
+func change_background_alpha(color):
+	$Background.self_modulate.a = color / 100.0

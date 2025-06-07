@@ -10,12 +10,12 @@ centered = false
 script = ExtResource("2_lrqlo")
 
 [node name="RichTextLabel" type="RichTextLabel" parent="."]
-offset_left = -27.5
+offset_left = -29.5
 offset_top = -6.5
-offset_right = 572.5
+offset_right = 570.5
 offset_bottom = 173.5
 scale = Vector2(0.1, 0.1)
 theme_override_fonts/normal_font = ExtResource("3_lrqlo")
 theme_override_font_sizes/normal_font_size = 100
 bbcode_enabled = true
-text = "[center]200:1000"
+text = "[center]1000"

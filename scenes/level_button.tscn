@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://cwgb7kkl1qb4"]
+
+[ext_resource type="FontFile" uid="uid://42iydnvi6hbk" path="res://pixelFJ8pt1-Modified.otf" id="1_hrusj"]
+[ext_resource type="StyleBox" uid="uid://cuf5vft5tj2jy" path="res://scenes/level_tile_incomplete.tres" id="2_6g3el"]
+[ext_resource type="Script" uid="uid://bjvo8cdy8njpl" path="res://scenes/level_button.gd" id="3_ium1h"]
+
+[node name="LevelButton" type="Button"]
+offset_left = 34.5
+offset_top = 39.5
+offset_right = 53.5
+offset_bottom = 58.5
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("1_hrusj")
+theme_override_font_sizes/font_size = 8
+theme_override_styles/hover_pressed = ExtResource("2_6g3el")
+theme_override_styles/hover = ExtResource("2_6g3el")
+theme_override_styles/pressed = ExtResource("2_6g3el")
+theme_override_styles/normal = ExtResource("2_6g3el")
+text = "00"
+script = ExtResource("3_ium1h")
+
+[connection signal="pressed" from="." to="." method="_on_pressed"]

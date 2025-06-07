@@ -10,7 +10,7 @@ var player_data = {
 	"previous_scene" : "title",
 }
 var just_completed = false
-
+var dev_mode = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

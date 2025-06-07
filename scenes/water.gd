@@ -60,7 +60,7 @@ func _process(delta: float) -> void:
 			if(check_cell == tree_tileset.data_types["root"]):
 				var root_node = tree_tileset.find_root_in_current_stroke(water_position) #find on draw
 				if (root_node == null):
-					root_node = tree_tileset.find_root_near_mouse(water_position) #find on non draw
+					root_node = tree_tileset.find_root_near_mouse(water_position, true) #find on non draw
 
 				#print(root_node)
 				if (root_node!=null):
