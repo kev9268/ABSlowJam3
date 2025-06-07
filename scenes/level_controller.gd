@@ -118,3 +118,9 @@ func cursor_follow():
 func play_sound(sound_name : String):
 	$Audio.play_sound(sound_name)
 	
+func complete_level():
+	Global.paused = true
+	Global.level_list[level_folder] = true
+	Global.just_completed = true
+	$Audio.play_sound("win")
+	$GUI.finish_level()

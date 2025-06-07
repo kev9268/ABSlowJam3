@@ -12,6 +12,9 @@ var scenes = {
 func _ready() -> void:
 	if is_title_screen:
 		$TitleScreen.visible = true
+	if Global.player_data["current_scene"] == "hub" and Global.just_completed:
+		Global.just_completed = false
+		$CompleteScreen.play_fade()
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.s
 func _process(delta: float) -> void:
@@ -37,13 +40,28 @@ func toggle_setting_screen():
 	$SettingScreen.settings_button_pressed()
 
 func switch_scene(scene_name : String):
+	Global.player_data["previous_scene"] = Global.player_data["current_scene"]
+	Global.player_data["current_scene"] = scene_name
 	get_tree().change_scene_to_file(scenes[scene_name])
 	
 func return_level():
 	if Global.player_data["current_scene"] == "hub":
+		Global.player_data["previous_scene"] = "hub"
+		Global.player_data["current_scene"] = "title"
 		get_tree().change_scene_to_file(scenes["title"])
 	else:
+		Global.player_data["previous_scene"] = Global.player_data["current_scene"]
+		Global.player_data["current_scene"] = "hub"
 		get_tree().change_scene_to_file(scenes["hub"])
 	
 func restart_scene():
 	get_tree().reload_current_scene()
+
+func finish_level():
+	$CompleteScreen.play_complete()
+
+func _on_complete_screen_animation_complete() -> void:
+	Global.paused = false
+	Global.player_data["previous_scene"] = Global.player_data["current_scene"]
+	Global.player_data["current_scene"] = "hub"
+	get_tree().change_scene_to_file(scenes["hub"])

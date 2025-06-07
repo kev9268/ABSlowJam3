@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://ccei02rg700le"]
+[gd_scene load_steps=7 format=3 uid="uid://ccei02rg700le"]
 
 [ext_resource type="Script" uid="uid://dsplqdpfjp3wo" path="res://scenes/complete_screen.gd" id="1_5lhnu"]
+[ext_resource type="Texture2D" uid="uid://6tc8igrfdpnr" path="res://art/ui/complete.png" id="2_po8ux"]
 
 [sub_resource type="Animation" id="Animation_kpk0m"]
 length = 0.001
@@ -52,6 +53,30 @@ tracks/3/keys = {
 "update": 0,
 "values": [Vector2(0, 0)]
 }
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("CompleteScreen/Text:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("CompleteScreen/ColorRect:color")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0.392, 0, 0)]
+}
 
 [sub_resource type="Animation" id="Animation_fyxdr"]
 resource_name = "complete"
@@ -63,7 +88,7 @@ tracks/0/path = NodePath("CompleteScreen:_point2")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.5),
+"times": PackedFloat32Array(0, 0.266667),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Vector2(-50, 70), Vector2(220, -100)]
@@ -75,7 +100,7 @@ tracks/1/path = NodePath("CompleteScreen:_point3")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.5, 1),
+"times": PackedFloat32Array(0, 0.266667, 0.5),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
 "values": [Vector2(-50, 70), Vector2(220, -100), Vector2(0, 150)]
@@ -87,7 +112,7 @@ tracks/2/path = NodePath("CompleteScreen:_point4")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.5, 1, 1.5),
+"times": PackedFloat32Array(0, 0.266667, 0.5, 0.733333),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
 "values": [Vector2(-50, 70), Vector2(220, -100), Vector2(0, 150), Vector2(290, 0)]
@@ -99,26 +124,88 @@ tracks/3/path = NodePath("CompleteScreen:_point5")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.5, 1, 1.5, 1.96667),
+"times": PackedFloat32Array(0, 0.266667, 0.5, 0.733333, 1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
 "values": [Vector2(-50, 70), Vector2(220, -100), Vector2(0, 150), Vector2(290, 0), Vector2(130, 170)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("CompleteScreen/Text:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.266667, 0.733333, 1.2, 1.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("CompleteScreen/ColorRect:color")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 1.13333, 1.36667, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(0, 0.392, 0, 0), Color(0, 0.392, 0, 0), Color(0, 0.392, 0, 1), Color(0, 0.392, 0, 1)]
+}
+tracks/6/type = "method"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("CompleteScreen")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"animation_finished"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_po8ux"]
+resource_name = "fade"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CompleteScreen/ColorRect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0.392, 0, 1), Color(0, 0.392, 0, 0)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_kpk0m"]
 _data = {
 &"RESET": SubResource("Animation_kpk0m"),
-&"complete": SubResource("Animation_fyxdr")
+&"complete": SubResource("Animation_fyxdr"),
+&"fade": SubResource("Animation_po8ux")
 }
 
 [node name="CompleteScreen" type="Node2D"]
 script = ExtResource("1_5lhnu")
-_point2 = Vector2(220, -100)
-_point3 = Vector2(0, 150)
-_point4 = Vector2(290, 0)
-_point5 = Vector2(163.143, 134.786)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_right = 240.0
+offset_bottom = 135.0
+mouse_filter = 2
+color = Color(0, 0.392, 0, 0)
 
 [node name="Transition" type="Node2D" parent="."]
+
+[node name="Text" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0)
+texture = ExtResource("2_po8ux")
+centered = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../..")

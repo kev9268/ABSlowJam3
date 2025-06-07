@@ -9,6 +9,7 @@ var player_data = {
 	"current_scene" : "title",
 	"previous_scene" : "title",
 }
+var just_completed = false
 
 
 # Called when the node enters the scene tree for the first time.

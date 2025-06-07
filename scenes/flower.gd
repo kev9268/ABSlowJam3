@@ -32,6 +32,7 @@ func initialize():
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	if Global.paused: return
 	var i = 0
 	for bud in buds:
 		if flower_data[bud].collected: continue
@@ -50,9 +51,10 @@ func _process(delta: float) -> void:
 				#print("nothing " + str(i))
 		i+=1
 	if (num_obj_collected==objective_count):
-		var level_name = get_parent().get_parent().level_folder
-		print(level_name)
-		Global.level_list[level_name] = true
+		get_parent().get_parent().complete_level()
+		#print(level_name)
+		
+		
 
 		
 	

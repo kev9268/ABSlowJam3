@@ -10,7 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://n050nky0r8ab" path="res://art/water_tile.png" id="8_3ngcq"]
 [ext_resource type="Texture2D" uid="uid://wgp6bofgdoed" path="res://art/cursor.png" id="8_qn42a"]
 [ext_resource type="PackedScene" uid="uid://r0r7cvupp33b" path="res://scenes/audio.tscn" id="9_1sbr3"]
-[ext_resource type="Script" uid="uid://cc3rk8m12wpkx" path="res://scenes/water.gd" id="9_5sfo0"]
+[ext_resource type="Script" path="res://scenes/water.gd" id="9_5sfo0"]
 [ext_resource type="PackedScene" uid="uid://b6237ktkrkxpc" path="res://scenes/gui.tscn" id="12_5sfo0"]
 
 [sub_resource type="TileMapPattern" id="TileMapPattern_paw1w"]
