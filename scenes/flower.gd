@@ -6,6 +6,8 @@ var tree_tileset : TileMapLayer = null
 var buds = {}
 #.get_node("Layers/Tree")
 var flower_scene : PackedScene = load("res://scenes/flower.tscn")
+var objective_count
+var num_obj_collected = 0
 
 var tile_types = {
 	"tree":0,
@@ -19,6 +21,8 @@ func _ready() -> void:
 	
 func initialize():
 	buds = get_used_cells()
+	objective_count = buds.size()
+	print(objective_count)
 	for bud in buds:
 		var flower_node = flower_scene.instantiate()
 		flower_node.collectable_type = flower_node.collect_types[get_cell_source_id(bud)]
@@ -28,6 +32,7 @@ func initialize():
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	if Global.paused: return
 	var i = 0
 	for bud in buds:
 		if flower_data[bud].collected: continue
@@ -37,11 +42,22 @@ func _process(delta: float) -> void:
 				var success = tree_tileset.collect_flower(bud, flower_data[bud], check_cell)
 				if success:
 					flower_data[bud].collect_item()
+					
+					num_obj_collected+=1
+					print(num_obj_collected)
 				#print("blossom " + str(i))
 				break
 			#else:
 				#print("nothing " + str(i))
 		i+=1
+	if (num_obj_collected==objective_count):
+		get_parent().get_parent().complete_level()
+		#print(level_name)
+		
+		
+
+		
+	
 		
 			
 

@@ -1,5 +1,6 @@
 extends Node
 var paused = false
+var level_list = {}
 var player_data = {
 	"background_transparency" : 100,
 	"music" : 80,
@@ -8,6 +9,7 @@ var player_data = {
 	"current_scene" : "title",
 	"previous_scene" : "title",
 }
+var just_completed = false
 
 
 # Called when the node enters the scene tree for the first time.

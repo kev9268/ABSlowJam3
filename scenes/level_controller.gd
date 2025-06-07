@@ -4,6 +4,7 @@ extends Node2D
 var cursor : Sprite2D
 @export var level_folder : String = ""
 @export var music_type : int 
+
 var screen_dimensions = Vector2i(240,135)
 var pixel_to_data = {
 	Color.hex(0x411c03ff) : "apple_tree",
@@ -117,3 +118,9 @@ func cursor_follow():
 func play_sound(sound_name : String):
 	$Audio.play_sound(sound_name)
 	
+func complete_level():
+	Global.paused = true
+	Global.level_list[level_folder] = true
+	Global.just_completed = true
+	$Audio.play_sound("win")
+	$GUI.finish_level()

@@ -301,6 +301,7 @@ func undo_pressed():
 						if just_added:
 							item.reset_item()
 							collection_dict.erase(item)
+							get_node("../Collectable").num_obj_collected -= 1
 						else:
 							var old_position = root_node["collection"][item]["position"]
 							item.global_position = Vector2(old_position) 

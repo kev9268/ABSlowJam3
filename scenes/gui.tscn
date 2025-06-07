@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://b6237ktkrkxpc"]
+[gd_scene load_steps=12 format=3 uid="uid://b6237ktkrkxpc"]
 
 [ext_resource type="Script" uid="uid://da5sosjvewlpc" path="res://scenes/gui.gd" id="1_xki8e"]
 [ext_resource type="Texture2D" uid="uid://bilov7m8pwr4t" path="res://art/ui/play_icon.png" id="2_v3be1"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://ttejxkwaardn" path="res://art/ui/quit_icon.png" id="8_rvbyd"]
 [ext_resource type="Texture2D" uid="uid://b74bpw5pv0p84" path="res://art/ui/quit_icon_hover.png" id="9_wpw45"]
 [ext_resource type="PackedScene" uid="uid://bbppmt810msmj" path="res://scenes/setting_screen.tscn" id="10_1mbii"]
+[ext_resource type="PackedScene" uid="uid://ccei02rg700le" path="res://scenes/complete_screen.tscn" id="11_v3be1"]
 
 [node name="GUI" type="CanvasLayer"]
 process_mode = 3
@@ -84,9 +85,12 @@ texture_hover = ExtResource("9_wpw45")
 
 [node name="SettingScreen" parent="." instance=ExtResource("10_1mbii")]
 
+[node name="CompleteScreen" parent="." instance=ExtResource("11_v3be1")]
+
 [connection signal="pressed" from="TitleScreen/PlayButton" to="." method="switch_scene" binds= ["hub"]]
 [connection signal="pressed" from="TitleScreen/SettingButtion" to="." method="toggle_setting_screen"]
 [connection signal="pressed" from="PauseMenu/PlayButton" to="." method="close_pause_menu"]
 [connection signal="pressed" from="PauseMenu/SettingButton" to="." method="toggle_setting_screen"]
 [connection signal="pressed" from="PauseMenu/RestartButton" to="." method="restart_scene"]
 [connection signal="pressed" from="PauseMenu/QuitButton" to="." method="return_level"]
+[connection signal="animation_complete" from="CompleteScreen" to="." method="_on_complete_screen_animation_complete"]
