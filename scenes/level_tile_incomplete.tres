@@ -1,0 +1,9 @@
+[gd_resource type="StyleBoxTexture" load_steps=2 format=3 uid="uid://cuf5vft5tj2jy"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_kw04o"]
+load_path = "res://.godot/imported/incomplete_level.png-b890cf548dc7af50d88b5eeab9821e45.ctex"
+
+[resource]
+texture = SubResource("CompressedTexture2D_kw04o")
+texture_margin_left = 1.0
+texture_margin_top = 2.0
